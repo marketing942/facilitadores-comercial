@@ -57,13 +57,19 @@ const tools = [
 
 export default function Home() {
   return (
-    <div className="max-w-5xl mx-auto px-4 py-16">
-      <div className="text-center mb-12">
+    <div className="max-w-5xl mx-auto px-4 py-16 flex flex-col min-h-[calc(100vh-3.5rem)]">
+      {/* Header */}
+      <div className="text-center mb-10">
         <h1 className="text-4xl font-bold text-gray-900 mb-3">Facilitadores Comercial</h1>
-        <p className="text-lg text-gray-500">Ferramentas para agilizar o dia a dia do time comercial</p>
+        <p className="text-lg text-gray-500 mb-6">Ferramentas para agilizar o dia a dia do time comercial</p>
+        <div className="inline-block bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-3 rounded-2xl shadow-sm">
+          <p className="text-base font-semibold tracking-wide">Keep Calm And Bora Vender 🔥</p>
+          <p className="text-sm text-green-100 mt-0.5">Nosso time é foda!</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Tools grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 flex-1">
         {tools.map((tool) => (
           <Link key={tool.href} href={tool.href} className="group">
             <div className={`bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 ${tool.border}`}>
@@ -89,6 +95,33 @@ export default function Home() {
           <p className="text-sm text-gray-400">Novas ferramentas serão adicionadas aqui</p>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="mt-16 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-center gap-3 text-xs text-gray-400">
+        <span>
+          Idealizador:{" "}
+          <a
+            href="https://www.instagram.com/itallomota1"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-600 font-medium hover:text-pink-500 transition-colors"
+          >
+            @itallomota1
+          </a>
+        </span>
+        <span className="hidden sm:inline text-gray-200">·</span>
+        <span>
+          Programador:{" "}
+          <a
+            href="https://claude.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-600 font-medium hover:text-orange-500 transition-colors"
+          >
+            Claude Code
+          </a>
+        </span>
+      </footer>
     </div>
   );
 }
