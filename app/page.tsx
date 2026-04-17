@@ -1,5 +1,58 @@
 import Link from "next/link";
 
+const tools = [
+  {
+    href: "/calculadora",
+    title: "Calculadora de Parcelas",
+    description:
+      "Simule juros, parcelas e o valor líquido recebido via Guru + Pagar.me",
+    available: true,
+    icon: (
+      <svg
+        className="w-6 h-6 text-green-700"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+        />
+      </svg>
+    ),
+    iconBg: "bg-green-100 group-hover:bg-green-200",
+    border: "hover:border-green-400",
+    badge: "text-green-700 bg-green-50",
+  },
+  {
+    href: "/precificacao",
+    title: "Precificação de Serviço",
+    description:
+      "Calcule o custo da operação, o preço por hora e visualize o DRE completo",
+    available: true,
+    icon: (
+      <svg
+        className="w-6 h-6 text-blue-700"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+        />
+      </svg>
+    ),
+    iconBg: "bg-blue-100 group-hover:bg-blue-200",
+    border: "hover:border-blue-400",
+    badge: "text-blue-700 bg-blue-50",
+  },
+];
+
 export default function Home() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-16">
@@ -13,36 +66,30 @@ export default function Home() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Link href="/calculadora" className="group">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-green-400 transition-all duration-200">
-            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-200 transition-colors">
-              <svg
-                className="w-6 h-6 text-green-700"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
+        {tools.map((tool) => (
+          <Link key={tool.href} href={tool.href} className="group">
+            <div
+              className={`bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 ${tool.border}`}
+            >
+              <div
+                className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors ${tool.iconBg}`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                />
-              </svg>
+                {tool.icon}
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                {tool.title}
+              </h2>
+              <p className="text-sm text-gray-500">{tool.description}</p>
+              <span
+                className={`inline-block mt-4 text-xs font-medium px-2 py-1 rounded-full ${tool.badge}`}
+              >
+                Disponível
+              </span>
             </div>
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">
-              Calculadora de Parcelas
-            </h2>
-            <p className="text-sm text-gray-500">
-              Simule juros, parcelas e o valor líquido recebido via Guru +
-              Pagar.me
-            </p>
-            <span className="inline-block mt-4 text-xs font-medium text-green-700 bg-green-50 px-2 py-1 rounded-full">
-              Disponível
-            </span>
-          </div>
-        </Link>
+          </Link>
+        ))}
 
+        {/* Placeholder */}
         <div className="bg-white rounded-2xl shadow-sm border border-dashed border-gray-200 p-6 opacity-50 cursor-not-allowed">
           <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
             <svg
@@ -59,9 +106,7 @@ export default function Home() {
               />
             </svg>
           </div>
-          <h2 className="text-lg font-semibold text-gray-400 mb-1">
-            Em breve
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-400 mb-1">Em breve</h2>
           <p className="text-sm text-gray-400">
             Novas ferramentas serão adicionadas aqui
           </p>

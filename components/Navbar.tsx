@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const navItems = [
   { label: "Início", href: "/" },
   { label: "Calculadora", href: "/calculadora" },
+  { label: "Precificação", href: "/precificacao" },
 ];
 
 export default function Navbar() {

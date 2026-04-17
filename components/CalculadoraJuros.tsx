@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 // Pagar.me MDR rates for D+2 anticipation per installment count
 const D02_RATES: Record<number, number> = {
@@ -122,8 +123,8 @@ function calcRows(price: number, interestRate: number): InstallmentRow[] {
 }
 
 export default function CalculadoraJuros() {
-  const [priceInput, setPriceInput] = useState("897,00");
-  const [rateInput, setRateInput] = useState("1,89");
+  const [priceInput, setPriceInput] = useLocalStorage("calc_price", "897,00");
+  const [rateInput, setRateInput] = useLocalStorage("calc_rate", "1,89");
 
   const price = useMemo(() => {
     const cleaned = priceInput.replace(/\./g, "").replace(",", ".");
