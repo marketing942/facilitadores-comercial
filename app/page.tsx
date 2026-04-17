@@ -28,6 +28,19 @@ const tools = [
     badge: "text-blue-700 bg-blue-50",
   },
   {
+    href: "/precificacao-produtos",
+    title: "Precificação de Produtos",
+    description: "DRE por produto — Mentorias, Presencial, Online, Físicos e Supletivo",
+    icon: (
+      <svg className="w-6 h-6 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+      </svg>
+    ),
+    iconBg: "bg-rose-100 group-hover:bg-rose-200",
+    border: "hover:border-rose-400",
+    badge: "text-rose-700 bg-rose-50",
+  },
+  {
     href: "/precificacao-saas",
     title: "Precificação de SaaS",
     description: "Descubra o preço mensal ideal com base em Churn, CAC, Margem e LTV/CAC alvo",

@@ -7,6 +7,7 @@ const navItems = [
   { label: "Início", href: "/" },
   { label: "Calculadora", href: "/calculadora" },
   { label: "Serviços", href: "/precificacao" },
+  { label: "Produtos", href: "/precificacao-produtos" },
   { label: "SaaS", href: "/precificacao-saas" },
 ];
 
