@@ -285,37 +285,6 @@ export default function CalculadoraJuros() {
         </div>
       </div>
 
-      {/* Maquineta warning */}
-      <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex gap-3">
-        <div className="flex-shrink-0 w-8 h-8 bg-amber-200 rounded-lg flex items-center justify-center">
-          <svg
-            className="w-4 h-4 text-amber-800"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-            />
-          </svg>
-        </div>
-        <div>
-          <p className="text-sm font-semibold text-amber-800">
-            Atenção: venda por maquineta
-          </p>
-          <p className="text-sm text-amber-700 mt-0.5">
-            Se o cliente pagar pela maquineta (cartão físico), a taxa cobrada é
-            de <strong>5%</strong> sobre o valor da venda — e ela não é
-            repassada automaticamente. É importante informar ao cliente e, se
-            necessário, incluir essa taxa no valor cobrado, caso ele não queira
-            pagar pelo link da Pagar.me + Guru.
-          </p>
-        </div>
-      </div>
-
       {/* Results table */}
       {price > 0 ? (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
@@ -501,12 +470,7 @@ export default function CalculadoraJuros() {
               value="0,82%"
               sub="sobre o valor da transação"
             />
-            <InfoCard
-              label="Maquineta"
-              value="5,00%"
-              sub="repassar ao cliente se necessário"
-              highlight
-            />
+
           </div>
         </div>
       )}
