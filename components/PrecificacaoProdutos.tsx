@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -29,12 +29,13 @@ interface Product {
   discounts: Discounts;
 }
 
-type CategoryId = "mentorias" | "presencial" | "online" | "fisicos" | "supletivo";
+type CategoryId = string;
 
 interface Category {
   id: CategoryId;
   label: string;
   color: string;
+  isCustom?: boolean;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -100,13 +101,30 @@ const SUPLETIVO_COSTS = (fornecedores: string): VariableCost[] => [
   vc("v6", "CPA Médio Tráfego", "fixed", "0"),
 ];
 
-const CATEGORY_TEMPLATES: Record<CategoryId, () => VariableCost[]> = {
+const GENERIC_COSTS = (): VariableCost[] => [
+  vc("v1", "Imposto sobre venda", "percent", "13"),
+  vc("v2", "Taxas de Gateway %", "percent", "3"),
+  vc("v3", "Comissões", "percent", "4"),
+  vc("v4", "Taxa Gateway R$", "fixed", "4"),
+  vc("v5", "CPA Médio Tráfego", "fixed", "0"),
+];
+
+const CATEGORY_TEMPLATES: Record<string, () => VariableCost[]> = {
   mentorias: MENTORIA_COSTS,
   presencial: () => PRESENCIAL_COSTS("10.5"),
   online: () => ONLINE_COSTS("2"),
   fisicos: () => FISICO_COSTS("0"),
   supletivo: () => SUPLETIVO_COSTS("0"),
 };
+
+const CUSTOM_COLORS = [
+  { id: "teal", label: "Teal" },
+  { id: "indigo", label: "Índigo" },
+  { id: "pink", label: "Rosa" },
+  { id: "yellow", label: "Amarelo" },
+  { id: "cyan", label: "Ciano" },
+  { id: "lime", label: "Lima" },
+];
 
 function p(
   id: string,
@@ -532,9 +550,77 @@ function ProductCard({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
+const TAB_COLORS: Record<string, string> = {
+  blue: "border-blue-500 text-blue-700 bg-blue-50",
+  green: "border-green-500 text-green-700 bg-green-50",
+  purple: "border-purple-500 text-purple-700 bg-purple-50",
+  orange: "border-orange-500 text-orange-700 bg-orange-50",
+  red: "border-red-500 text-red-700 bg-red-50",
+  teal: "border-teal-500 text-teal-700 bg-teal-50",
+  indigo: "border-indigo-500 text-indigo-700 bg-indigo-50",
+  pink: "border-pink-500 text-pink-700 bg-pink-50",
+  yellow: "border-yellow-500 text-yellow-700 bg-yellow-50",
+  cyan: "border-cyan-500 text-cyan-700 bg-cyan-50",
+  lime: "border-lime-500 text-lime-700 bg-lime-50",
+};
+
+const DOT_COLORS: Record<string, string> = {
+  teal: "bg-teal-500",
+  indigo: "bg-indigo-500",
+  pink: "bg-pink-500",
+  yellow: "bg-yellow-400",
+  cyan: "bg-cyan-500",
+  lime: "bg-lime-500",
+};
+
 export default function PrecificacaoProdutos() {
-  const [data, setData] = useLocalStorage<Record<CategoryId, Product[]>>("prod_data", DEFAULT_DATA);
+  const [data, setData] = useLocalStorage<Record<string, Product[]>>("prod_data", DEFAULT_DATA);
+  const [customCategories, setCustomCategories] = useLocalStorage<Category[]>("prod_custom_categories", []);
   const [activeCategory, setActiveCategory] = useState<CategoryId>("mentorias");
+  const [addingCategory, setAddingCategory] = useState(false);
+  const [newCatName, setNewCatName] = useState("");
+  const [newCatColor, setNewCatColor] = useState("teal");
+  const newCatInputRef = useRef<HTMLInputElement>(null);
+
+  const allCategories = useMemo(
+    () => [...CATEGORIES, ...customCategories],
+    [customCategories]
+  );
+
+  useEffect(() => {
+    if (addingCategory) newCatInputRef.current?.focus();
+  }, [addingCategory]);
+
+  const confirmAddCategory = useCallback(() => {
+    const name = newCatName.trim();
+    if (!name) return;
+    const newCat: Category = {
+      id: `cat_${Date.now()}`,
+      label: name,
+      color: newCatColor,
+      isCustom: true,
+    };
+    setCustomCategories((prev) => [...prev, newCat]);
+    setData((prev) => ({ ...prev, [newCat.id]: [] }));
+    setActiveCategory(newCat.id);
+    setAddingCategory(false);
+    setNewCatName("");
+    setNewCatColor("teal");
+  }, [newCatName, newCatColor, setCustomCategories, setData]);
+
+  const deleteCategory = useCallback(
+    (catId: string) => {
+      if (!confirm("Excluir esta categoria e todos os seus produtos?")) return;
+      setCustomCategories((prev) => prev.filter((c) => c.id !== catId));
+      setData((prev) => {
+        const next = { ...prev };
+        delete next[catId];
+        return next;
+      });
+      setActiveCategory("mentorias");
+    },
+    [setCustomCategories, setData]
+  );
 
   const products = data[activeCategory] ?? [];
 
@@ -542,7 +628,7 @@ export default function PrecificacaoProdutos() {
     (id: string, updated: Product) =>
       setData((prev) => ({
         ...prev,
-        [activeCategory]: prev[activeCategory].map((p) => (p.id === id ? updated : p)),
+        [activeCategory]: (prev[activeCategory] ?? []).map((p) => (p.id === id ? updated : p)),
       })),
     [activeCategory, setData]
   );
@@ -551,19 +637,20 @@ export default function PrecificacaoProdutos() {
     (id: string) =>
       setData((prev) => ({
         ...prev,
-        [activeCategory]: prev[activeCategory].filter((p) => p.id !== id),
+        [activeCategory]: (prev[activeCategory] ?? []).filter((p) => p.id !== id),
       })),
     [activeCategory, setData]
   );
 
   const addProduct = useCallback(() => {
+    const template = CATEGORY_TEMPLATES[activeCategory] ?? GENERIC_COSTS;
     const newProduct: Product = {
       id: uid(),
       name: "Novo Produto",
       cost: "0",
       price: "0",
       qty: "1",
-      variableCosts: CATEGORY_TEMPLATES[activeCategory](),
+      variableCosts: template(),
       despesasFixas: "0",
       discounts: { venda: "0", dupla: "0", renovacao: "0" },
     };
@@ -573,33 +660,70 @@ export default function PrecificacaoProdutos() {
     }));
   }, [activeCategory, setData]);
 
-  const catConfig = CATEGORIES.find((c) => c.id === activeCategory)!;
-  const tabColors: Record<string, string> = {
-    blue: "border-blue-500 text-blue-700 bg-blue-50",
-    green: "border-green-500 text-green-700 bg-green-50",
-    purple: "border-purple-500 text-purple-700 bg-purple-50",
-    orange: "border-orange-500 text-orange-700 bg-orange-50",
-    red: "border-red-500 text-red-700 bg-red-50",
-  };
-  const activeTab = tabColors[catConfig.color];
+  const catConfig = allCategories.find((c) => c.id === activeCategory) ?? CATEGORIES[0];
 
   return (
     <div className="space-y-5">
       {/* Category tabs */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-1 flex gap-1 overflow-x-auto">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setActiveCategory(cat.id)}
-            className={`flex-1 min-w-max px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
-              activeCategory === cat.id
-                ? `${tabColors[cat.color]} border`
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            {cat.label}
-          </button>
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-1 flex gap-1 overflow-x-auto items-center">
+        {allCategories.map((cat) => (
+          <div key={cat.id} className="relative group/tab flex-1 min-w-max">
+            <button
+              onClick={() => setActiveCategory(cat.id)}
+              className={`w-full px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+                activeCategory === cat.id
+                  ? `${TAB_COLORS[cat.color] ?? TAB_COLORS.teal} border`
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              {cat.label}
+            </button>
+            {cat.isCustom && (
+              <button
+                onClick={() => deleteCategory(cat.id)}
+                className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-xs items-center justify-center hidden group-hover/tab:flex z-10 leading-none"
+                title="Excluir categoria"
+              >
+                ×
+              </button>
+            )}
+          </div>
         ))}
+
+        {/* Add category */}
+        {addingCategory ? (
+          <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded-xl border border-gray-200 min-w-max">
+            <input
+              ref={newCatInputRef}
+              type="text"
+              value={newCatName}
+              onChange={(e) => setNewCatName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") confirmAddCategory(); if (e.key === "Escape") setAddingCategory(false); }}
+              placeholder="Nome da categoria"
+              className="text-sm border-0 bg-transparent focus:outline-none w-36 placeholder:text-gray-400"
+            />
+            <div className="flex gap-1">
+              {CUSTOM_COLORS.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setNewCatColor(c.id)}
+                  title={c.label}
+                  className={`w-3.5 h-3.5 rounded-full ${DOT_COLORS[c.id]} ring-offset-1 transition-all ${newCatColor === c.id ? "ring-2 ring-gray-500" : "hover:scale-125"}`}
+                />
+              ))}
+            </div>
+            <button onClick={confirmAddCategory} className="text-green-600 hover:text-green-700 font-bold text-sm px-1">✓</button>
+            <button onClick={() => setAddingCategory(false)} className="text-gray-400 hover:text-gray-600 text-sm px-0.5">✕</button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setAddingCategory(true)}
+            className="flex-shrink-0 w-8 h-8 rounded-xl border-2 border-dashed border-gray-200 text-gray-400 hover:border-green-400 hover:text-green-600 hover:bg-green-50 transition-all flex items-center justify-center text-lg leading-none"
+            title="Nova categoria"
+          >
+            +
+          </button>
+        )}
       </div>
 
       {/* Products list */}
