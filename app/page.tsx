@@ -53,6 +53,19 @@ const tools = [
     border: "hover:border-purple-400",
     badge: "text-purple-700 bg-purple-50",
   },
+  {
+    href: "/calculadora-ton",
+    title: "Calculadora Maquineta TON",
+    description: "Simule taxas da TON por plano (Super, Turbo, Max) em Pix, débito e crédito parcelado",
+    icon: (
+      <svg className="w-6 h-6 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+      </svg>
+    ),
+    iconBg: "bg-amber-100 group-hover:bg-amber-200",
+    border: "hover:border-amber-400",
+    badge: "text-amber-700 bg-amber-50",
+  },
 ];
 
 export default function Home() {
