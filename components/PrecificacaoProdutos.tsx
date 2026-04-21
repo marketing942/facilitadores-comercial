@@ -27,6 +27,7 @@ interface Product {
   variableCosts: VariableCost[];
   despesasFixas: string;
   discounts: Discounts;
+  ebitdaAlvo?: string;
 }
 
 type CategoryId = string;
@@ -194,7 +195,7 @@ function uid(): string {
   return `c_${Date.now()}_${Math.floor(Math.random() * 9999)}`;
 }
 
-function calcDRE(product: Product) {
+function calcDRE(product: Product, ebitdaOverride?: string) {
   const price = parseN(product.price);
   const qty = parseN(product.qty) || 1;
   const valorVenda = price * qty;
@@ -208,11 +209,35 @@ function calcDRE(product: Product) {
     return { ...c, amount };
   });
 
+  // Custo variável por unidade (independente de qty) — base para break-even
+  let custoVarUnit = 0;
+  product.variableCosts.forEach((c) => {
+    const val = parseN(c.value);
+    custoVarUnit += c.type === "percent" ? price * (val / 100) : val;
+  });
+  const mcUnit = price - custoVarUnit;
+  const mcUnitPct = price > 0 ? (mcUnit / price) * 100 : 0;
+
   const lucroBruto = valorVenda - custoVarTotal;
   const lucroLiquido = lucroBruto - despesasFixas;
   const pct = (v: number) => (valorVenda > 0 ? (v / valorVenda) * 100 : 0);
   const cost = parseN(product.cost);
   const markup = cost > 0 ? price / cost : null;
+
+  // Ponto de equilíbrio (unidades necessárias para cobrir custo fixo)
+  const breakEvenUnits: number | null =
+    despesasFixas === 0 ? 0 : mcUnit > 0 ? Math.ceil(despesasFixas / mcUnit) : null;
+  const breakEvenRevenue = breakEvenUnits !== null ? breakEvenUnits * price : null;
+
+  // EBITDA alvo — quantas unidades para atingir margem EBITDA desejada
+  const ebitdaRaw = ebitdaOverride ?? product.ebitdaAlvo ?? "15";
+  const ebitdaAlvoPct = parseN(ebitdaRaw);
+  const ebitdaFrac = ebitdaAlvoPct / 100;
+  // n × mcUnit = despesasFixas + n × price × ebitdaFrac
+  const denom = mcUnit - price * ebitdaFrac;
+  const targetUnits: number | null =
+    despesasFixas === 0 ? 0 : denom > 0 ? Math.ceil(despesasFixas / denom) : null;
+  const targetRevenue = targetUnits !== null ? targetUnits * price : null;
 
   const discounts = {
     venda: { pct: parseN(product.discounts.venda), amt: valorVenda * (parseN(product.discounts.venda) / 100) },
@@ -220,7 +245,13 @@ function calcDRE(product: Product) {
     renovacao: { pct: parseN(product.discounts.renovacao), amt: valorVenda * (parseN(product.discounts.renovacao) / 100) },
   };
 
-  return { valorVenda, custoVarTotal, costDetails, lucroBruto, lucroLiquido, pct, markup, despesasFixas, discounts };
+  return {
+    valorVenda, custoVarTotal, costDetails, lucroBruto, lucroLiquido,
+    pct, markup, despesasFixas, discounts,
+    mcUnit, mcUnitPct,
+    breakEvenUnits, breakEvenRevenue,
+    ebitdaAlvoPct, targetUnits, targetRevenue,
+  };
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -542,8 +573,238 @@ function ProductCard({
               </tbody>
             </table>
           </div>
+
+          {/* Viability analysis: break-even + EBITDA target */}
+          <div className="rounded-xl border border-gray-200 overflow-hidden">
+            <div className="bg-indigo-900 text-white px-3 py-2 flex items-center justify-between">
+              <span className="text-xs font-semibold tracking-wide">ANÁLISE DE VIABILIDADE</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-indigo-200">EBITDA Alvo</span>
+                <SmallInput
+                  value={product.ebitdaAlvo ?? "15"}
+                  onChange={(v) => set("ebitdaAlvo", v)}
+                  suffix="%"
+                  className="w-16 text-right"
+                />
+              </div>
+            </div>
+            <table className="w-full text-xs">
+              <tbody>
+                <tr className="border-b border-gray-50 bg-blue-50/50">
+                  <td className="px-3 py-2 font-semibold text-gray-700">MC por unidade</td>
+                  <td className="px-3 py-2 text-right font-bold text-blue-800">{fmt(dre.mcUnit)}</td>
+                  <td className="px-3 py-2 text-right font-semibold text-blue-700 w-24">
+                    {dre.mcUnitPct.toFixed(1).replace(".", ",")}%
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-50">
+                  <td className="px-3 py-2 text-gray-700 font-medium">Ponto de Equilíbrio</td>
+                  <td className="px-3 py-2 text-right font-semibold text-gray-900">
+                    {dre.breakEvenUnits === null
+                      ? <span className="text-red-500">MC negativa</span>
+                      : dre.breakEvenUnits === 0
+                      ? <span className="text-green-600">sem custo fixo</span>
+                      : `${dre.breakEvenUnits.toLocaleString("pt-BR")} unid.`}
+                  </td>
+                  <td className="px-3 py-2 text-right text-gray-500">
+                    {dre.breakEvenRevenue !== null && dre.breakEvenRevenue > 0 ? fmt(dre.breakEvenRevenue) : "—"}
+                  </td>
+                </tr>
+                <tr className={dre.targetUnits !== null && dre.targetUnits > 0 ? "bg-green-50" : ""}>
+                  <td className="px-3 py-2 font-semibold text-gray-800">
+                    Unidades p/ EBITDA {dre.ebitdaAlvoPct.toFixed(0)}%
+                  </td>
+                  <td className="px-3 py-2 text-right font-bold text-green-800">
+                    {dre.targetUnits === null
+                      ? <span className="text-red-500">inviável</span>
+                      : dre.targetUnits === 0
+                      ? <span className="text-green-700">qualquer volume</span>
+                      : `${dre.targetUnits.toLocaleString("pt-BR")} unid.`}
+                  </td>
+                  <td className="px-3 py-2 text-right font-semibold text-green-700">
+                    {dre.targetRevenue !== null && dre.targetRevenue > 0 ? fmt(dre.targetRevenue) : "—"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── Category Insights (régua de lucratividade) ──────────────────────────────
+
+function barColor(pct: number): string {
+  if (pct >= 30) return "bg-green-500";
+  if (pct >= 15) return "bg-yellow-400";
+  if (pct >= 0) return "bg-orange-400";
+  return "bg-red-500";
+}
+
+function textColor(pct: number): string {
+  if (pct >= 30) return "text-green-700";
+  if (pct >= 15) return "text-yellow-700";
+  if (pct >= 0) return "text-orange-600";
+  return "text-red-600";
+}
+
+function CategoryInsights({ products, catLabel }: { products: Product[]; catLabel: string }) {
+  const [ebitdaGlobal, setEbitdaGlobal] = useState("15");
+
+  const rows = useMemo(
+    () => products.map((p) => ({ product: p, dre: calcDRE(p, ebitdaGlobal) })),
+    [products, ebitdaGlobal]
+  );
+
+  const totalFaturamento = rows.reduce((s, r) => s + r.dre.valorVenda, 0);
+  const totalMC = rows.reduce((s, r) => s + r.dre.lucroBruto, 0);
+  const totalDespFixas = rows.reduce((s, r) => s + r.dre.despesasFixas, 0);
+  const totalLucroLiq = rows.reduce((s, r) => s + r.dre.lucroLiquido, 0);
+  const avgMCPct = totalFaturamento > 0 ? (totalMC / totalFaturamento) * 100 : 0;
+  const avgLLPct = totalFaturamento > 0 ? (totalLucroLiq / totalFaturamento) * 100 : 0;
+  const maxMCPct = Math.max(50, ...rows.map((r) => r.dre.mcUnitPct));
+
+  if (products.length === 0) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-5 py-6 text-center text-sm text-gray-400">
+        Adicione produtos nesta categoria para ver a régua de lucratividade.
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="px-5 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 className="font-bold text-sm text-gray-900 flex items-center gap-2">
+            <svg className="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Régua de Lucratividade — {catLabel}
+          </h3>
+          <p className="text-xs text-gray-500 mt-0.5">
+            MC por produto, ponto de equilíbrio e volume necessário para atingir o EBITDA alvo da categoria
+          </p>
+        </div>
+        <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+          <label className="text-xs font-semibold text-gray-600">EBITDA Alvo da categoria</label>
+          <SmallInput value={ebitdaGlobal} onChange={setEbitdaGlobal} suffix="%" className="w-16 text-right" />
+        </div>
+      </div>
+
+      {/* Bar chart: MC% por produto */}
+      <div className="px-5 py-4 border-b border-gray-100">
+        <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-3">
+          Margem de Contribuição por produto
+        </div>
+        <div className="space-y-2.5">
+          {rows.map(({ product, dre }) => {
+            const widthPct = maxMCPct > 0 ? Math.max(0, Math.min(100, (dre.mcUnitPct / maxMCPct) * 100)) : 0;
+            return (
+              <div key={product.id} className="grid grid-cols-[1fr_auto] gap-3 items-center">
+                <div className="min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium text-gray-700 truncate">{product.name}</span>
+                    <span className={`text-xs font-bold ml-2 ${textColor(dre.mcUnitPct)}`}>
+                      {dre.mcUnitPct.toFixed(1).replace(".", ",")}%
+                    </span>
+                  </div>
+                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${barColor(dre.mcUnitPct)}`}
+                      style={{ width: `${widthPct}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] text-gray-400 uppercase tracking-wider">MC/un</div>
+                  <div className="text-xs font-semibold text-gray-800">{fmt(dre.mcUnit)}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-4 text-[10px] text-gray-500">
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" />Excelente ≥ 30%</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-400" />Bom 15–29%</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-400" />Atenção &lt; 15%</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" />MC negativa</span>
+        </div>
+      </div>
+
+      {/* Detailed table */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="bg-gray-50 border-b border-gray-200">
+              <th className="text-left px-4 py-2.5 font-semibold text-gray-600">Produto</th>
+              <th className="text-right px-3 py-2.5 font-semibold text-gray-600">Preço</th>
+              <th className="text-right px-3 py-2.5 font-semibold text-gray-600">MC/un</th>
+              <th className="text-right px-3 py-2.5 font-semibold text-gray-600">Break-even</th>
+              <th className="text-right px-3 py-2.5 font-semibold text-gray-600">Unid. p/ EBITDA</th>
+              <th className="text-right px-3 py-2.5 font-semibold text-gray-600">Fat. Alvo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(({ product, dre }) => (
+              <tr key={product.id} className="border-b border-gray-50 hover:bg-gray-50/60">
+                <td className="px-4 py-2.5 font-medium text-gray-800 max-w-[200px] truncate">{product.name}</td>
+                <td className="px-3 py-2.5 text-right text-gray-700">{fmt(parseN(product.price))}</td>
+                <td className="px-3 py-2.5 text-right text-gray-700">{fmt(dre.mcUnit)}</td>
+                <td className="px-3 py-2.5 text-right">
+                  {dre.breakEvenUnits === null ? (
+                    <span className="text-red-500 text-[11px]">MC negativa</span>
+                  ) : dre.breakEvenUnits === 0 ? (
+                    <span className="text-green-600 text-[11px]">sem custo fixo</span>
+                  ) : (
+                    <span className="font-semibold text-gray-800">{dre.breakEvenUnits.toLocaleString("pt-BR")}</span>
+                  )}
+                </td>
+                <td className="px-3 py-2.5 text-right">
+                  {dre.targetUnits === null ? (
+                    <span className="text-red-500 text-[11px]">inviável</span>
+                  ) : dre.targetUnits === 0 ? (
+                    <span className="text-green-600 text-[11px]">qualquer</span>
+                  ) : (
+                    <span className="font-bold text-green-700">{dre.targetUnits.toLocaleString("pt-BR")}</span>
+                  )}
+                </td>
+                <td className="px-3 py-2.5 text-right font-semibold text-gray-800">
+                  {dre.targetRevenue !== null && dre.targetRevenue > 0 ? fmt(dre.targetRevenue) : "—"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Category totals */}
+      <div className="px-5 py-4 bg-gray-50 border-t border-gray-200 grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Fat. Mensal</div>
+          <div className="text-lg font-bold text-gray-900 mt-0.5">{fmt(totalFaturamento)}</div>
+        </div>
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500">MC Média</div>
+          <div className={`text-lg font-bold mt-0.5 ${textColor(avgMCPct)}`}>
+            {avgMCPct.toFixed(1).replace(".", ",")}%
+          </div>
+        </div>
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Despesas Fixas</div>
+          <div className="text-lg font-bold text-gray-900 mt-0.5">{fmt(totalDespFixas)}</div>
+        </div>
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Margem Líquida</div>
+          <div className={`text-lg font-bold mt-0.5 ${avgLLPct >= 0 ? "text-green-700" : "text-red-600"}`}>
+            {avgLLPct.toFixed(1).replace(".", ",")}%
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -749,6 +1010,9 @@ export default function PrecificacaoProdutos() {
           Novo produto em {catConfig.label}
         </button>
       </div>
+
+      {/* Category insights */}
+      <CategoryInsights products={products} catLabel={catConfig.label} />
 
       {/* Info footer */}
       <p className="text-xs text-gray-400 text-center">
