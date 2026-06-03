@@ -635,6 +635,112 @@ function textColor(pct: number): string {
   return "text-red-600";
 }
 
+function CategoryMarginChart({
+  data,
+  categories,
+}: {
+  data: Record<string, Product[]>;
+  categories: Category[];
+}) {
+  const rows = useMemo(() => {
+    return categories.map((cat) => {
+      const products = data[cat.id] ?? [];
+      let totalFat = 0;
+      let totalMC = 0;
+      let totalLL = 0;
+      products.forEach((prod) => {
+        const dre = calcDRE(prod);
+        totalFat += dre.valorVenda;
+        totalMC += dre.lucroBruto;
+        totalLL += dre.lucroLiquido;
+      });
+      const hasData = products.length > 0 && totalFat > 0;
+      return {
+        cat,
+        mcPct: hasData ? (totalMC / totalFat) * 100 : 0,
+        llPct: hasData ? (totalLL / totalFat) * 100 : 0,
+        hasData,
+      };
+    });
+  }, [data, categories]);
+
+  const maxAbs = Math.max(
+    50,
+    ...rows.map((r) => Math.max(Math.abs(r.mcPct), Math.abs(r.llPct)))
+  );
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="px-5 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 className="font-bold text-sm text-gray-900 flex items-center gap-2">
+            <svg className="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v18h18M7 14l4-4 4 4 5-5" />
+            </svg>
+            Comparativo de Margens por Categoria
+          </h3>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Margem de Contribuição vs Margem de Lucro Líquido — média ponderada pelo faturamento mensal de cada categoria
+          </p>
+        </div>
+        <div className="flex items-center gap-3 text-[11px]">
+          <span className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-sm bg-indigo-400" />
+            <span className="text-gray-600 font-medium">MC %</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-sm bg-emerald-600" />
+            <span className="text-gray-600 font-medium">ML %</span>
+          </span>
+        </div>
+      </div>
+
+      <div className="px-5 py-4 space-y-3.5">
+        {rows.map(({ cat, mcPct, llPct, hasData }) => {
+          const mcWidth = hasData ? Math.min(100, Math.max(0, (Math.abs(mcPct) / maxAbs) * 100)) : 0;
+          const llWidth = hasData ? Math.min(100, Math.max(0, (Math.abs(llPct) / maxAbs) * 100)) : 0;
+          return (
+            <div key={cat.id}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-semibold text-gray-800">{cat.label}</span>
+                {!hasData && <span className="text-[10px] text-gray-400">sem produtos</span>}
+              </div>
+              <div className="space-y-1">
+                {/* MC bar */}
+                <div className="grid grid-cols-[28px_1fr_56px] items-center gap-2">
+                  <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider">MC</span>
+                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${mcPct < 0 ? "bg-red-500" : "bg-indigo-400"}`}
+                      style={{ width: `${mcWidth}%` }}
+                    />
+                  </div>
+                  <span className={`text-xs font-bold text-right ${mcPct < 0 ? "text-red-600" : "text-indigo-700"}`}>
+                    {hasData ? `${mcPct.toFixed(1).replace(".", ",")}%` : "—"}
+                  </span>
+                </div>
+                {/* ML bar */}
+                <div className="grid grid-cols-[28px_1fr_56px] items-center gap-2">
+                  <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">ML</span>
+                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${llPct < 0 ? "bg-red-500" : "bg-emerald-600"}`}
+                      style={{ width: `${llWidth}%` }}
+                    />
+                  </div>
+                  <span className={`text-xs font-bold text-right ${llPct < 0 ? "text-red-600" : "text-emerald-700"}`}>
+                    {hasData ? `${llPct.toFixed(1).replace(".", ",")}%` : "—"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function CategoryInsights({ products, catLabel }: { products: Product[]; catLabel: string }) {
   const [ebitdaGlobal, setEbitdaGlobal] = useState("15");
 
@@ -909,6 +1015,9 @@ export default function PrecificacaoProdutos() {
 
   return (
     <div className="space-y-5">
+      {/* Top: comparativo de margens entre categorias */}
+      <CategoryMarginChart data={data} categories={allCategories} />
+
       {/* Category tabs */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-1 flex gap-1 overflow-x-auto items-center">
         {allCategories.map((cat) => (
