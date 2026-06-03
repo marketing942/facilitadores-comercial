@@ -49,10 +49,10 @@ function InputField({
 }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-slate-600 mb-1">{label}</label>
       <div className="relative flex items-center">
         {prefix && (
-          <span className="absolute left-3 text-gray-400 text-sm font-medium pointer-events-none">
+          <span className="absolute left-3 text-slate-400 text-sm font-medium pointer-events-none">
             {prefix}
           </span>
         )}
@@ -66,12 +66,12 @@ function InputField({
           }`}
         />
         {suffix && (
-          <span className="absolute right-3 text-gray-400 text-sm font-medium pointer-events-none">
+          <span className="absolute right-3 text-slate-400 text-sm font-medium pointer-events-none">
             {suffix}
           </span>
         )}
       </div>
-      {hint && <p className="text-xs text-gray-400 mt-0.5">{hint}</p>}
+      {hint && <p className="text-xs text-slate-400 mt-0.5">{hint}</p>}
     </div>
   );
 }
@@ -87,12 +87,12 @@ function CalcField({
 }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-slate-500 mb-1">{label}</label>
       <div
         className={`w-full px-4 py-2 rounded-lg text-sm font-semibold border ${
           highlight
             ? "bg-green-50 border-green-200 text-green-800"
-            : "bg-gray-100 border-gray-200 text-gray-700"
+            : "bg-slate-100 border-slate-200 text-slate-700"
         }`}
       >
         {value}
@@ -126,25 +126,25 @@ function DreRow({
   const valueColor = isNegative
     ? "text-red-600 font-bold"
     : isHeader
-    ? "text-gray-900 font-bold"
-    : "text-gray-800";
+    ? "text-slate-900 font-bold"
+    : "text-slate-800";
   const pctColor = isNegative
     ? "text-red-500 font-bold"
     : isHeader
-    ? "text-gray-700 font-semibold"
-    : "text-gray-600";
+    ? "text-slate-700 font-semibold"
+    : "text-slate-600";
 
   return (
-    <tr className={`border-b border-gray-100 ${isHeader ? "bg-gray-50" : "bg-white"}`}>
-      <td className={`px-4 py-2.5 text-sm ${isHeader ? "font-bold text-gray-800" : isSubitem ? "pl-8 text-gray-600" : "text-gray-700 font-medium"}`}>
-        {isSubitem && <span className="text-gray-300 mr-1">└</span>}
+    <tr className={`border-b border-slate-100 ${isHeader ? "bg-slate-50" : "bg-white"}`}>
+      <td className={`px-4 py-2.5 text-sm ${isHeader ? "font-bold text-slate-800" : isSubitem ? "pl-8 text-slate-600" : "text-slate-700 font-medium"}`}>
+        {isSubitem && <span className="text-slate-300 mr-1">└</span>}
         {label}
       </td>
       <td className="px-4 py-2 text-right">
         {onValueChange ? (
           <div className="flex justify-end">
             <div className="relative w-40">
-              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">R$</span>
+              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">R$</span>
               <input
                 type="text"
                 inputMode="decimal"
@@ -169,7 +169,7 @@ function DreRow({
                 onChange={(e) => onRateChange(e.target.value)}
                 className="w-full pl-3 pr-7 py-1.5 border border-amber-300 bg-amber-50 rounded-md text-sm font-medium text-right focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
               />
-              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">%</span>
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">%</span>
             </div>
           </div>
         ) : (
@@ -196,21 +196,21 @@ function CustomCostRow({
   onRemove: (id: string) => void;
 }) {
   return (
-    <tr className="border-b border-gray-100 bg-white group">
+    <tr className="border-b border-slate-100 bg-white group">
       <td className="pl-8 pr-2 py-2">
         <div className="flex items-center gap-1">
-          <span className="text-gray-300 mr-1 text-sm">└</span>
+          <span className="text-slate-300 mr-1 text-sm">└</span>
           <input
             type="text"
             value={cost.name}
             onChange={(e) => onChange(cost.id, "name", e.target.value)}
             placeholder="Nome do custo"
-            className="flex-1 px-2 py-1 text-sm border border-amber-300 bg-amber-50 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent min-w-0"
+            className="flex-1 px-2 py-1 text-sm border border-amber-300 bg-amber-50 rounded-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent min-w-0"
           />
         </div>
       </td>
       <td className="px-4 py-2 text-right">
-        <span className="text-sm text-gray-800">{fmt(value)}</span>
+        <span className="text-sm text-slate-800">{fmt(value)}</span>
       </td>
       <td className="px-4 py-2 text-right w-36">
         <div className="flex justify-end">
@@ -222,7 +222,7 @@ function CustomCostRow({
               onChange={(e) => onChange(cost.id, "rate", e.target.value)}
               className="w-full pl-3 pr-7 py-1.5 border border-amber-300 bg-amber-50 rounded-md text-sm font-medium text-right focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
             />
-            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">%</span>
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">%</span>
           </div>
         </div>
       </td>
@@ -230,7 +230,7 @@ function CustomCostRow({
         <button
           onClick={() => onRemove(cost.id)}
           title="Remover"
-          className="opacity-0 group-hover:opacity-100 transition-opacity w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-100 text-gray-400 hover:text-red-500"
+          className="opacity-0 group-hover:opacity-100 transition-opacity w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-100 text-slate-400 hover:text-red-500"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -321,8 +321,8 @@ export default function PrecificacaoServico() {
   return (
     <div className="space-y-6">
       {/* Estrutura operacional */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <h2 className="text-base font-semibold text-gray-800 mb-5">Estrutura operacional</h2>
+      <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] p-6">
+        <h2 className="text-base font-semibold text-slate-800 mb-5">Estrutura operacional</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <InputField label="Qtde de funcionários operacionais" value={sFuncionarios} onChange={setFuncionarios} hint="número de colaboradores" />
           <InputField label="Salário médio dos funcionários" value={sSalario} onChange={setSalario} prefix="R$" hint="salário mensal por colaborador" />
@@ -333,8 +333,8 @@ export default function PrecificacaoServico() {
       </div>
 
       {/* Precificação de horas */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <h2 className="text-base font-semibold text-gray-800 mb-5">Precificação de horas</h2>
+      <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] p-6">
+        <h2 className="text-base font-semibold text-slate-800 mb-5">Precificação de horas</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <InputField label="Preço de venda da hora" value={sPrecoHora} onChange={setPrecoHora} prefix="R$" />
           <InputField label="Horas vendidas por mês" value={sHorasVendidas} onChange={setHorasVendidas} suffix="h" />
@@ -355,21 +355,21 @@ export default function PrecificacaoServico() {
 
       {/* DRE Table */}
       {isValid ? (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold text-gray-800">DRE — Demonstração de Resultado</h2>
-              <p className="text-xs text-gray-500 mt-0.5">Campos em amarelo são editáveis · passe o mouse sobre uma linha para remover</p>
+              <h2 className="text-base font-semibold text-slate-800">DRE — Demonstração de Resultado</h2>
+              <p className="text-xs text-slate-500 mt-0.5">Campos em amarelo são editáveis · passe o mouse sobre uma linha para remover</p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-400">Valor de venda mensal</p>
-              <p className="text-lg font-bold text-gray-900">{fmt(valorVenda)}</p>
+              <p className="text-xs text-slate-400">Valor de venda mensal</p>
+              <p className="text-lg font-bold text-slate-900">{fmt(valorVenda)}</p>
             </div>
           </div>
 
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-800 text-white text-xs font-semibold uppercase tracking-wide">
+              <tr className="bg-slate-900 text-white text-xs font-semibold uppercase tracking-wide">
                 <th className="text-left px-4 py-3">DRE</th>
                 <th className="text-right px-4 py-3">Valores</th>
                 <th className="text-right px-4 py-3 w-36">% da Venda</th>
@@ -378,7 +378,7 @@ export default function PrecificacaoServico() {
             </thead>
             <tbody>
               {/* Valor de Venda */}
-              <tr className="border-b border-gray-100 bg-blue-50">
+              <tr className="border-b border-slate-100 bg-blue-50">
                 <td className="px-4 py-3 text-sm font-bold text-blue-900">VALOR DE VENDA</td>
                 <td className="px-4 py-3 text-right text-sm font-bold text-blue-900">{fmt(valorVenda)}</td>
                 <td className="px-4 py-3 text-right text-sm font-bold text-blue-700">100,0%</td>
@@ -409,7 +409,7 @@ export default function PrecificacaoServico() {
               })}
 
               {/* Add cost button row */}
-              <tr className="border-b border-gray-100 bg-white">
+              <tr className="border-b border-slate-100 bg-white">
                 <td colSpan={4} className="pl-8 py-2">
                   <button
                     onClick={handleAddCustomCost}
@@ -426,8 +426,8 @@ export default function PrecificacaoServico() {
               </tr>
 
               {/* Lucro Bruto */}
-              <tr className={`border-b border-gray-200 ${lucroBruto >= 0 ? "bg-green-50" : "bg-red-50"}`}>
-                <td className="px-4 py-3 text-sm font-bold text-gray-800">LUCRO BRUTO (MC)</td>
+              <tr className={`border-b border-slate-200 ${lucroBruto >= 0 ? "bg-green-50" : "bg-red-50"}`}>
+                <td className="px-4 py-3 text-sm font-bold text-slate-800">LUCRO BRUTO (MC)</td>
                 <td className={`px-4 py-3 text-right text-sm font-bold ${lucroBruto >= 0 ? "text-green-700" : "text-red-600"}`}>{fmt(lucroBruto)}</td>
                 <td className={`px-4 py-3 text-right text-sm font-bold ${lucroBruto >= 0 ? "text-green-600" : "text-red-500"}`}>{fmtPct(pct(lucroBruto))}</td>
                 <td className="w-10" />
@@ -438,7 +438,7 @@ export default function PrecificacaoServico() {
 
               {/* Lucro Líquido */}
               <tr className={`${lucroLiquido >= 0 ? "bg-green-100" : "bg-red-100"}`}>
-                <td className="px-4 py-3 text-sm font-bold text-gray-900">LUCRO LÍQUIDO (ML)</td>
+                <td className="px-4 py-3 text-sm font-bold text-slate-900">LUCRO LÍQUIDO (ML)</td>
                 <td className={`px-4 py-3 text-right text-base font-bold ${lucroLiquido >= 0 ? "text-green-800" : "text-red-700"}`}>{fmt(lucroLiquido)}</td>
                 <td className={`px-4 py-3 text-right text-sm font-bold ${lucroLiquido >= 0 ? "text-green-700" : "text-red-600"}`}>{fmtPct(pct(lucroLiquido))}</td>
                 <td className="w-10" />
@@ -447,7 +447,7 @@ export default function PrecificacaoServico() {
           </table>
 
           {/* Summary */}
-          <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 grid grid-cols-2 sm:grid-cols-4 gap-4">
             <SummaryCard label="Valor de Venda" value={fmt(valorVenda)} color="blue" />
             <SummaryCard label="Custo Total (var + fixo)" value={fmt(custoVarTotal + despesasFixas)} color="gray" />
             <SummaryCard label="Lucro Bruto (MC)" value={fmt(lucroBruto)} color={lucroBruto >= 0 ? "green" : "red"} />
@@ -455,8 +455,8 @@ export default function PrecificacaoServico() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
-          <p className="text-gray-400 text-sm">Preencha o preço da hora e as horas vendidas para ver o DRE</p>
+        <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] p-12 text-center">
+          <p className="text-slate-400 text-sm">Preencha o preço da hora e as horas vendidas para ver o DRE</p>
         </div>
       )}
     </div>
@@ -468,7 +468,7 @@ function SummaryCard({ label, value, color }: { label: string; value: string; co
     blue: "text-blue-800 bg-blue-50 border-blue-200",
     green: "text-green-800 bg-green-50 border-green-200",
     red: "text-red-800 bg-red-50 border-red-200",
-    gray: "text-gray-700 bg-white border-gray-200",
+    gray: "text-slate-700 bg-white border-slate-200",
   };
   return (
     <div className={`rounded-xl border p-3 ${colors[color]}`}>

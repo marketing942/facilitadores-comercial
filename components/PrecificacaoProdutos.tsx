@@ -271,7 +271,7 @@ function SmallInput({
 }) {
   return (
     <div className="relative inline-flex items-center">
-      {prefix && <span className="absolute left-2 text-gray-400 text-xs pointer-events-none">{prefix}</span>}
+      {prefix && <span className="absolute left-2 text-slate-400 text-xs pointer-events-none">{prefix}</span>}
       <input
         type="text"
         inputMode="decimal"
@@ -280,7 +280,7 @@ function SmallInput({
         placeholder={placeholder}
         className={`border border-amber-300 bg-amber-50 rounded text-xs font-medium focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-transparent ${prefix ? "pl-6 pr-2" : suffix ? "pl-2 pr-6" : "px-2"} py-1 ${className}`}
       />
-      {suffix && <span className="absolute right-2 text-gray-400 text-xs pointer-events-none">{suffix}</span>}
+      {suffix && <span className="absolute right-2 text-slate-400 text-xs pointer-events-none">{suffix}</span>}
     </div>
   );
 }
@@ -373,21 +373,21 @@ function ProductCard({
   const mlPct = dre.pct(dre.lucroLiquido);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-xl ring-1 ring-slate-200 overflow-hidden">
       {/* Header */}
       <div
-        className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors select-none"
+        className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-50 transition-colors select-none"
         onClick={() => setExpanded((e) => !e)}
       >
         <svg
-          className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform ${expanded ? "rotate-90" : ""}`}
+          className={`w-4 h-4 text-slate-400 flex-shrink-0 transition-transform ${expanded ? "rotate-90" : ""}`}
           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
         </svg>
-        <span className="font-semibold text-gray-800 text-sm flex-1 min-w-0 truncate">{product.name}</span>
+        <span className="font-semibold text-slate-800 text-sm flex-1 min-w-0 truncate">{product.name}</span>
         <div className="flex items-center gap-3 text-xs shrink-0">
-          <span className="text-gray-500">{fmt(parseN(product.price))}</span>
+          <span className="text-slate-500">{fmt(parseN(product.price))}</span>
           <span className={`font-semibold px-1.5 py-0.5 rounded ${mcPct >= 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
             MC {fmtPct(mcPct)}
           </span>
@@ -396,7 +396,7 @@ function ProductCard({
           </span>
           <button
             onClick={(e) => { e.stopPropagation(); if (confirm(`Excluir "${product.name}"?`)) onDelete(); }}
-            className="p-1 rounded hover:bg-red-50 text-gray-300 hover:text-red-400 transition-colors"
+            className="p-1 rounded hover:bg-red-50 text-slate-300 hover:text-red-400 transition-colors"
             title="Excluir produto"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -407,11 +407,11 @@ function ProductCard({
       </div>
 
       {expanded && (
-        <div className="border-t border-gray-100 px-4 pt-4 pb-5 space-y-5">
+        <div className="border-t border-slate-100 px-4 pt-4 pb-5 space-y-5">
           {/* Product header fields */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Nome do produto</label>
+              <label className="block text-xs text-slate-500 mb-1">Nome do produto</label>
               <input
                 type="text"
                 value={product.name}
@@ -420,30 +420,30 @@ function ProductCard({
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Preço de Custo</label>
+              <label className="block text-xs text-slate-500 mb-1">Preço de Custo</label>
               <SmallInput value={product.cost} onChange={(v) => set("cost", v)} prefix="R$" className="w-full" />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Preço de Venda</label>
+              <label className="block text-xs text-slate-500 mb-1">Preço de Venda</label>
               <SmallInput value={product.price} onChange={(v) => set("price", v)} prefix="R$" className="w-full" />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Qtde/mês</label>
+              <label className="block text-xs text-slate-500 mb-1">Qtde/mês</label>
               <SmallInput value={product.qty} onChange={(v) => set("qty", v)} className="w-full" />
             </div>
           </div>
 
           {/* Mark-Up display */}
-          <div className="flex gap-4 text-xs text-gray-500">
-            <span>Mark-Up: <strong className="text-gray-700">{dre.markup !== null ? `${dre.markup.toFixed(1).replace(".", ",")}x` : "—"}</strong></span>
-            <span>Valor de Venda/mês: <strong className="text-gray-700">{fmt(dre.valorVenda)}</strong></span>
+          <div className="flex gap-4 text-xs text-slate-500">
+            <span>Mark-Up: <strong className="text-slate-700">{dre.markup !== null ? `${dre.markup.toFixed(1).replace(".", ",")}x` : "—"}</strong></span>
+            <span>Valor de Venda/mês: <strong className="text-slate-700">{fmt(dre.valorVenda)}</strong></span>
           </div>
 
           {/* DRE Table */}
-          <div className="rounded-xl border border-gray-200 overflow-hidden">
+          <div className="rounded-xl ring-1 ring-slate-200 overflow-hidden">
             <table className="w-full text-xs">
               <thead>
-                <tr className="bg-gray-800 text-white">
+                <tr className="bg-slate-900 text-white">
                   <th className="text-left px-3 py-2 font-semibold">DRE</th>
                   <th className="text-right px-3 py-2 font-semibold">Valores</th>
                   <th className="text-right px-3 py-2 font-semibold w-24">% da Venda</th>
@@ -452,7 +452,7 @@ function ProductCard({
               </thead>
               <tbody>
                 {/* Valor de Venda */}
-                <tr className="bg-blue-50 border-b border-gray-100">
+                <tr className="bg-blue-50 border-b border-slate-100">
                   <td className="px-3 py-2 font-bold text-blue-900">VALOR DE VENDA</td>
                   <td className="px-3 py-2 text-right font-bold text-blue-900">{fmt(dre.valorVenda)}</td>
                   <td className="px-3 py-2 text-right font-bold text-blue-700">100,0%</td>
@@ -460,24 +460,24 @@ function ProductCard({
                 </tr>
 
                 {/* Custo Var Total */}
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <td className="px-3 py-2 font-bold text-gray-800">CUSTO VAR. TOTAL</td>
-                  <td className="px-3 py-2 text-right font-bold text-gray-800">{fmt(dre.custoVarTotal)}</td>
-                  <td className="px-3 py-2 text-right text-gray-600 font-semibold">{fmtPct(dre.pct(dre.custoVarTotal)).replace("+", "")}</td>
+                <tr className="bg-slate-50 border-b border-slate-100">
+                  <td className="px-3 py-2 font-bold text-slate-800">CUSTO VAR. TOTAL</td>
+                  <td className="px-3 py-2 text-right font-bold text-slate-800">{fmt(dre.custoVarTotal)}</td>
+                  <td className="px-3 py-2 text-right text-slate-600 font-semibold">{fmtPct(dre.pct(dre.custoVarTotal)).replace("+", "")}</td>
                   <td />
                 </tr>
 
                 {/* Variable costs */}
                 {dre.costDetails.map((c) => (
-                  <tr key={c.id} className="border-b border-gray-50 group hover:bg-amber-50/30">
+                  <tr key={c.id} className="border-b border-slate-50 group hover:bg-amber-50/30">
                     <td className="pl-6 pr-2 py-1.5">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-gray-300">└</span>
+                        <span className="text-slate-300">└</span>
                         <input
                           type="text"
                           value={c.name}
                           onChange={(e) => updateCost(c.id, "name", e.target.value)}
-                          className="flex-1 text-xs text-gray-600 bg-transparent border-b border-transparent focus:border-amber-400 focus:outline-none min-w-0"
+                          className="flex-1 text-xs text-slate-600 bg-transparent border-b border-transparent focus:border-amber-400 focus:outline-none min-w-0"
                         />
                       </div>
                     </td>
@@ -485,14 +485,14 @@ function ProductCard({
                       {c.type === "fixed" ? (
                         <SmallInput value={c.value} onChange={(v) => updateCost(c.id, "value", v)} prefix="R$" className="w-24 text-right" />
                       ) : (
-                        <span className="text-gray-700">{fmt(c.amount)}</span>
+                        <span className="text-slate-700">{fmt(c.amount)}</span>
                       )}
                     </td>
                     <td className="px-3 py-1.5 text-right">
                       {c.type === "percent" ? (
                         <SmallInput value={c.value} onChange={(v) => updateCost(c.id, "value", v)} suffix="%" className="w-16 text-right" />
                       ) : (
-                        <span className="text-gray-500">{dre.pct(c.amount).toFixed(1).replace(".", ",")}%</span>
+                        <span className="text-slate-500">{dre.pct(c.amount).toFixed(1).replace(".", ",")}%</span>
                       )}
                     </td>
                     <td className="pr-1 py-1.5">
@@ -500,13 +500,13 @@ function ProductCard({
                         <button
                           onClick={() => toggleCostType(c.id)}
                           title={c.type === "percent" ? "Mudar para R$ fixo" : "Mudar para %"}
-                          className="px-1 py-0.5 rounded text-xs text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-colors"
+                          className="px-1 py-0.5 rounded text-xs text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-colors"
                         >
                           {c.type === "percent" ? "%" : "R$"}
                         </button>
                         <button
                           onClick={() => removeCost(c.id)}
-                          className="p-0.5 rounded hover:bg-red-50 text-gray-300 hover:text-red-400 transition-colors"
+                          className="p-0.5 rounded hover:bg-red-50 text-slate-300 hover:text-red-400 transition-colors"
                         >
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -518,7 +518,7 @@ function ProductCard({
                 ))}
 
                 {/* Add cost row */}
-                <tr className="border-b border-gray-100">
+                <tr className="border-b border-slate-100">
                   <td colSpan={4} className="pl-6 py-1.5">
                     <button
                       onClick={addCost}
@@ -535,32 +535,32 @@ function ProductCard({
                 </tr>
 
                 {/* Lucro Bruto */}
-                <tr className={`border-b border-gray-100 ${dre.lucroBruto >= 0 ? "bg-green-50" : "bg-red-50"}`}>
-                  <td className="px-3 py-2 font-bold text-gray-800">LUCRO BRUTO (MC)</td>
+                <tr className={`border-b border-slate-100 ${dre.lucroBruto >= 0 ? "bg-green-50" : "bg-red-50"}`}>
+                  <td className="px-3 py-2 font-bold text-slate-800">LUCRO BRUTO (MC)</td>
                   <td className={`px-3 py-2 text-right font-bold ${dre.lucroBruto >= 0 ? "text-green-700" : "text-red-600"}`}>{fmt(dre.lucroBruto)}</td>
                   <td className={`px-3 py-2 text-right font-bold ${dre.lucroBruto >= 0 ? "text-green-600" : "text-red-500"}`}>{fmtPct(mcPct)}</td>
                   <td />
                 </tr>
 
                 {/* Despesas Fixas - header com total */}
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <td className="px-3 py-2 font-bold text-gray-800">DESPESAS FIXAS</td>
-                  <td className="px-3 py-2 text-right font-bold text-gray-800">{fmt(dre.despesasFixas)}</td>
-                  <td className="px-3 py-2 text-right text-gray-600 font-semibold">{dre.pct(dre.despesasFixas).toFixed(1).replace(".", ",")}%</td>
+                <tr className="bg-slate-50 border-b border-slate-100">
+                  <td className="px-3 py-2 font-bold text-slate-800">DESPESAS FIXAS</td>
+                  <td className="px-3 py-2 text-right font-bold text-slate-800">{fmt(dre.despesasFixas)}</td>
+                  <td className="px-3 py-2 text-right text-slate-600 font-semibold">{dre.pct(dre.despesasFixas).toFixed(1).replace(".", ",")}%</td>
                   <td />
                 </tr>
 
                 {/* Sub-linhas de despesas fixas */}
                 {fixedCosts.map((f) => (
-                  <tr key={f.id} className="border-b border-gray-50 group hover:bg-amber-50/30">
+                  <tr key={f.id} className="border-b border-slate-50 group hover:bg-amber-50/30">
                     <td className="pl-6 pr-2 py-1.5">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-gray-300">└</span>
+                        <span className="text-slate-300">└</span>
                         <input
                           type="text"
                           value={f.name}
                           onChange={(e) => updateFixed(f.id, "name", e.target.value)}
-                          className="flex-1 text-xs text-gray-600 bg-transparent border-b border-transparent focus:border-amber-400 focus:outline-none min-w-0"
+                          className="flex-1 text-xs text-slate-600 bg-transparent border-b border-transparent focus:border-amber-400 focus:outline-none min-w-0"
                         />
                       </div>
                     </td>
@@ -568,13 +568,13 @@ function ProductCard({
                       <SmallInput value={f.value} onChange={(v) => updateFixed(f.id, "value", v)} prefix="R$" className="w-32 text-right" />
                     </td>
                     <td className="px-3 py-1.5 text-right">
-                      <span className="text-gray-500">{dre.pct(parseN(f.value)).toFixed(1).replace(".", ",")}%</span>
+                      <span className="text-slate-500">{dre.pct(parseN(f.value)).toFixed(1).replace(".", ",")}%</span>
                     </td>
                     <td className="pr-1 py-1.5">
                       <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => removeFixed(f.id)}
-                          className="p-0.5 rounded hover:bg-red-50 text-gray-300 hover:text-red-400 transition-colors"
+                          className="p-0.5 rounded hover:bg-red-50 text-slate-300 hover:text-red-400 transition-colors"
                           title="Remover despesa fixa"
                         >
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -587,7 +587,7 @@ function ProductCard({
                 ))}
 
                 {/* Botão adicionar despesa fixa */}
-                <tr className="border-b border-gray-100">
+                <tr className="border-b border-slate-100">
                   <td colSpan={4} className="pl-6 py-1.5">
                     <button
                       onClick={addFixed}
@@ -605,7 +605,7 @@ function ProductCard({
 
                 {/* Lucro Líquido */}
                 <tr className={dre.lucroLiquido >= 0 ? "bg-green-100" : "bg-red-100"}>
-                  <td className="px-3 py-2 font-bold text-gray-900">LUCRO LÍQUIDO (ML)</td>
+                  <td className="px-3 py-2 font-bold text-slate-900">LUCRO LÍQUIDO (ML)</td>
                   <td className={`px-3 py-2 text-right font-bold text-sm ${dre.lucroLiquido >= 0 ? "text-green-800" : "text-red-700"}`}>{fmt(dre.lucroLiquido)}</td>
                   <td className={`px-3 py-2 text-right font-bold ${dre.lucroLiquido >= 0 ? "text-green-700" : "text-red-600"}`}>{fmtPct(mlPct)}</td>
                   <td />
@@ -664,15 +664,15 @@ function CategoryMarginChart({
   const maxAbs = Math.max(50, ...rows.map((r) => Math.abs(r.mcPct)));
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-      <div className="px-5 py-4 border-b border-gray-100">
-        <h3 className="font-bold text-sm text-gray-900 flex items-center gap-2">
+    <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] overflow-hidden">
+      <div className="px-5 py-4 border-b border-slate-100">
+        <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
           <svg className="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v18h18M7 14l4-4 4 4 5-5" />
           </svg>
           Margem de Contribuição por Categoria
         </h3>
-        <p className="text-xs text-gray-500 mt-0.5">
+        <p className="text-xs text-slate-500 mt-0.5">
           Média ponderada pelo faturamento mensal de cada categoria
         </p>
       </div>
@@ -682,8 +682,8 @@ function CategoryMarginChart({
           const mcWidth = hasData ? Math.min(100, Math.max(0, (Math.abs(mcPct) / maxAbs) * 100)) : 0;
           return (
             <div key={cat.id} className="grid grid-cols-[110px_1fr_64px] items-center gap-3">
-              <span className="text-xs font-semibold text-gray-800 truncate">{cat.label}</span>
-              <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+              <span className="text-xs font-semibold text-slate-800 truncate">{cat.label}</span>
+              <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all ${mcPct < 0 ? "bg-red-500" : "bg-indigo-500"}`}
                   style={{ width: `${mcWidth}%` }}
@@ -718,35 +718,35 @@ function CategoryInsights({ products, catLabel }: { products: Product[]; catLabe
 
   if (products.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-5 py-6 text-center text-sm text-gray-400">
+      <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] px-5 py-6 text-center text-sm text-slate-400">
         Adicione produtos nesta categoria para ver a régua de lucratividade.
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-      <div className="px-5 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
+    <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] overflow-hidden">
+      <div className="px-5 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="font-bold text-sm text-gray-900 flex items-center gap-2">
+          <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
             <svg className="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             Régua de Lucratividade — {catLabel}
           </h3>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             MC por produto, ponto de equilíbrio e volume necessário para atingir o EBITDA alvo da categoria
           </p>
         </div>
-        <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-          <label className="text-xs font-semibold text-gray-600">EBITDA Alvo da categoria</label>
+        <div className="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
+          <label className="text-xs font-semibold text-slate-600">EBITDA Alvo da categoria</label>
           <SmallInput value={ebitdaGlobal} onChange={setEbitdaGlobal} suffix="%" className="w-16 text-right" />
         </div>
       </div>
 
       {/* Bar chart: MC% por produto */}
-      <div className="px-5 py-4 border-b border-gray-100">
-        <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-3">
+      <div className="px-5 py-4 border-b border-slate-100">
+        <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-3">
           Margem de Contribuição por produto
         </div>
         <div className="space-y-2.5">
@@ -756,12 +756,12 @@ function CategoryInsights({ products, catLabel }: { products: Product[]; catLabe
               <div key={product.id} className="grid grid-cols-[1fr_auto] gap-3 items-center">
                 <div className="min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-gray-700 truncate">{product.name}</span>
+                    <span className="text-xs font-medium text-slate-700 truncate">{product.name}</span>
                     <span className={`text-xs font-bold ml-2 ${textColor(dre.mcUnitPct)}`}>
                       {dre.mcUnitPct.toFixed(1).replace(".", ",")}%
                     </span>
                   </div>
-                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${barColor(dre.mcUnitPct)}`}
                       style={{ width: `${widthPct}%` }}
@@ -769,8 +769,8 @@ function CategoryInsights({ products, catLabel }: { products: Product[]; catLabe
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] text-gray-400 uppercase tracking-wider">MC/un</div>
-                  <div className="text-xs font-semibold text-gray-800">{fmt(dre.mcUnit)}</div>
+                  <div className="text-[10px] text-slate-400 uppercase tracking-wider">MC/un</div>
+                  <div className="text-xs font-semibold text-slate-800">{fmt(dre.mcUnit)}</div>
                 </div>
               </div>
             );
@@ -778,7 +778,7 @@ function CategoryInsights({ products, catLabel }: { products: Product[]; catLabe
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-4 text-[10px] text-gray-500">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-4 text-[10px] text-slate-500">
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" />Excelente ≥ 30%</span>
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-400" />Bom 15–29%</span>
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-400" />Atenção &lt; 15%</span>
@@ -790,28 +790,28 @@ function CategoryInsights({ products, catLabel }: { products: Product[]; catLabe
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="text-left px-4 py-2.5 font-semibold text-gray-600">Produto</th>
-              <th className="text-right px-3 py-2.5 font-semibold text-gray-600">Preço</th>
-              <th className="text-right px-3 py-2.5 font-semibold text-gray-600">MC/un</th>
-              <th className="text-right px-3 py-2.5 font-semibold text-gray-600">Break-even</th>
-              <th className="text-right px-3 py-2.5 font-semibold text-gray-600">Unid. p/ EBITDA</th>
-              <th className="text-right px-3 py-2.5 font-semibold text-gray-600">Fat. Alvo</th>
+            <tr className="bg-slate-50 border-b border-slate-200">
+              <th className="text-left px-4 py-2.5 font-semibold text-slate-600">Produto</th>
+              <th className="text-right px-3 py-2.5 font-semibold text-slate-600">Preço</th>
+              <th className="text-right px-3 py-2.5 font-semibold text-slate-600">MC/un</th>
+              <th className="text-right px-3 py-2.5 font-semibold text-slate-600">Break-even</th>
+              <th className="text-right px-3 py-2.5 font-semibold text-slate-600">Unid. p/ EBITDA</th>
+              <th className="text-right px-3 py-2.5 font-semibold text-slate-600">Fat. Alvo</th>
             </tr>
           </thead>
           <tbody>
             {rows.map(({ product, dre }) => (
-              <tr key={product.id} className="border-b border-gray-50 hover:bg-gray-50/60">
-                <td className="px-4 py-2.5 font-medium text-gray-800 max-w-[200px] truncate">{product.name}</td>
-                <td className="px-3 py-2.5 text-right text-gray-700">{fmt(parseN(product.price))}</td>
-                <td className="px-3 py-2.5 text-right text-gray-700">{fmt(dre.mcUnit)}</td>
+              <tr key={product.id} className="border-b border-slate-50 hover:bg-slate-50/60">
+                <td className="px-4 py-2.5 font-medium text-slate-800 max-w-[200px] truncate">{product.name}</td>
+                <td className="px-3 py-2.5 text-right text-slate-700">{fmt(parseN(product.price))}</td>
+                <td className="px-3 py-2.5 text-right text-slate-700">{fmt(dre.mcUnit)}</td>
                 <td className="px-3 py-2.5 text-right">
                   {dre.breakEvenUnits === null ? (
                     <span className="text-red-500 text-[11px]">MC negativa</span>
                   ) : dre.breakEvenUnits === 0 ? (
                     <span className="text-green-600 text-[11px]">sem custo fixo</span>
                   ) : (
-                    <span className="font-semibold text-gray-800">{dre.breakEvenUnits.toLocaleString("pt-BR")}</span>
+                    <span className="font-semibold text-slate-800">{dre.breakEvenUnits.toLocaleString("pt-BR")}</span>
                   )}
                 </td>
                 <td className="px-3 py-2.5 text-right">
@@ -823,7 +823,7 @@ function CategoryInsights({ products, catLabel }: { products: Product[]; catLabe
                     <span className="font-bold text-green-700">{dre.targetUnits.toLocaleString("pt-BR")}</span>
                   )}
                 </td>
-                <td className="px-3 py-2.5 text-right font-semibold text-gray-800">
+                <td className="px-3 py-2.5 text-right font-semibold text-slate-800">
                   {dre.targetRevenue !== null && dre.targetRevenue > 0 ? fmt(dre.targetRevenue) : "—"}
                 </td>
               </tr>
@@ -833,23 +833,23 @@ function CategoryInsights({ products, catLabel }: { products: Product[]; catLabe
       </div>
 
       {/* Category totals */}
-      <div className="px-5 py-4 bg-gray-50 border-t border-gray-200 grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="px-5 py-4 bg-slate-50 border-t border-slate-200 grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Fat. Mensal</div>
-          <div className="text-lg font-bold text-gray-900 mt-0.5">{fmt(totalFaturamento)}</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Fat. Mensal</div>
+          <div className="text-lg font-bold text-slate-900 mt-0.5">{fmt(totalFaturamento)}</div>
         </div>
         <div>
-          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500">MC Média</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">MC Média</div>
           <div className={`text-lg font-bold mt-0.5 ${textColor(avgMCPct)}`}>
             {avgMCPct.toFixed(1).replace(".", ",")}%
           </div>
         </div>
         <div>
-          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Despesas Fixas</div>
-          <div className="text-lg font-bold text-gray-900 mt-0.5">{fmt(totalDespFixas)}</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Despesas Fixas</div>
+          <div className="text-lg font-bold text-slate-900 mt-0.5">{fmt(totalDespFixas)}</div>
         </div>
         <div>
-          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Margem Líquida</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Margem Líquida</div>
           <div className={`text-lg font-bold mt-0.5 ${avgLLPct >= 0 ? "text-green-700" : "text-red-600"}`}>
             {avgLLPct.toFixed(1).replace(".", ",")}%
           </div>
@@ -978,7 +978,7 @@ export default function PrecificacaoProdutos() {
       <CategoryMarginChart data={data} categories={allCategories} />
 
       {/* Category tabs */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-1 flex gap-1 overflow-x-auto items-center">
+      <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] p-1 flex gap-1 overflow-x-auto items-center">
         {allCategories.map((cat) => (
           <div key={cat.id} className="relative group/tab flex-1 min-w-max">
             <button
@@ -986,7 +986,7 @@ export default function PrecificacaoProdutos() {
               className={`w-full px-4 py-2 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
                 activeCategory === cat.id
                   ? `${TAB_COLORS[cat.color] ?? TAB_COLORS.teal} border`
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                  : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
               }`}
             >
               {cat.label}
@@ -1005,7 +1005,7 @@ export default function PrecificacaoProdutos() {
 
         {/* Add category */}
         {addingCategory ? (
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded-xl border border-gray-200 min-w-max">
+          <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 rounded-xl border border-slate-200 min-w-max">
             <input
               ref={newCatInputRef}
               type="text"
@@ -1013,7 +1013,7 @@ export default function PrecificacaoProdutos() {
               onChange={(e) => setNewCatName(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") confirmAddCategory(); if (e.key === "Escape") setAddingCategory(false); }}
               placeholder="Nome da categoria"
-              className="text-sm border-0 bg-transparent focus:outline-none w-36 placeholder:text-gray-400"
+              className="text-sm border-0 bg-transparent focus:outline-none w-36 placeholder:text-slate-400"
             />
             <div className="flex gap-1">
               {CUSTOM_COLORS.map((c) => (
@@ -1021,17 +1021,17 @@ export default function PrecificacaoProdutos() {
                   key={c.id}
                   onClick={() => setNewCatColor(c.id)}
                   title={c.label}
-                  className={`w-3.5 h-3.5 rounded-full ${DOT_COLORS[c.id]} ring-offset-1 transition-all ${newCatColor === c.id ? "ring-2 ring-gray-500" : "hover:scale-125"}`}
+                  className={`w-3.5 h-3.5 rounded-full ${DOT_COLORS[c.id]} ring-offset-1 transition-all ${newCatColor === c.id ? "ring-2 ring-slate-500" : "hover:scale-125"}`}
                 />
               ))}
             </div>
             <button onClick={confirmAddCategory} className="text-green-600 hover:text-green-700 font-bold text-sm px-1">✓</button>
-            <button onClick={() => setAddingCategory(false)} className="text-gray-400 hover:text-gray-600 text-sm px-0.5">✕</button>
+            <button onClick={() => setAddingCategory(false)} className="text-slate-400 hover:text-slate-600 text-sm px-0.5">✕</button>
           </div>
         ) : (
           <button
             onClick={() => setAddingCategory(true)}
-            className="flex-shrink-0 w-8 h-8 rounded-xl border-2 border-dashed border-gray-200 text-gray-400 hover:border-green-400 hover:text-green-600 hover:bg-green-50 transition-all flex items-center justify-center text-lg leading-none"
+            className="flex-shrink-0 w-8 h-8 rounded-xl border-2 border-dashed border-slate-200 text-slate-400 hover:border-green-400 hover:text-green-600 hover:bg-green-50 transition-all flex items-center justify-center text-lg leading-none"
             title="Nova categoria"
           >
             +
@@ -1054,7 +1054,7 @@ export default function PrecificacaoProdutos() {
         {/* Add product button */}
         <button
           onClick={addProduct}
-          className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-sm text-gray-400 hover:text-green-700 hover:border-green-300 hover:bg-green-50 font-medium transition-all flex items-center justify-center gap-2"
+          className="w-full py-3 border-2 border-dashed border-slate-200 rounded-xl text-sm text-slate-400 hover:text-green-700 hover:border-green-300 hover:bg-green-50 font-medium transition-all flex items-center justify-center gap-2"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -1067,7 +1067,7 @@ export default function PrecificacaoProdutos() {
       <CategoryInsights products={products} catLabel={catConfig.label} />
 
       {/* Info footer */}
-      <p className="text-xs text-gray-400 text-center">
+      <p className="text-xs text-slate-400 text-center">
         Campos em amarelo são editáveis · passe o mouse sobre um custo para remover ou trocar o tipo (R$ / %)
       </p>
     </div>

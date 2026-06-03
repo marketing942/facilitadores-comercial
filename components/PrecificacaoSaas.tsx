@@ -40,14 +40,14 @@ function InputRow({
   description?: string;
 }) {
   return (
-    <div className="flex items-center justify-between py-3.5 border-b border-gray-100 last:border-0 gap-4">
+    <div className="flex items-center justify-between py-3.5 border-b border-slate-100 last:border-0 gap-4">
       <div className="flex-1">
-        <p className="text-sm font-medium text-gray-800">{label}</p>
-        {description && <p className="text-xs text-gray-400 mt-0.5">{description}</p>}
+        <p className="text-sm font-medium text-slate-800">{label}</p>
+        {description && <p className="text-xs text-slate-400 mt-0.5">{description}</p>}
       </div>
       <div className="relative flex items-center shrink-0">
         {prefix && (
-          <span className="absolute left-3 text-gray-400 text-sm font-medium pointer-events-none">{prefix}</span>
+          <span className="absolute left-3 text-slate-400 text-sm font-medium pointer-events-none">{prefix}</span>
         )}
         <input
           type="text"
@@ -59,7 +59,7 @@ function InputRow({
           }`}
         />
         {suffix && (
-          <span className="absolute right-3 text-gray-400 text-sm font-medium pointer-events-none">{suffix}</span>
+          <span className="absolute right-3 text-slate-400 text-sm font-medium pointer-events-none">{suffix}</span>
         )}
       </div>
     </div>
@@ -81,15 +81,15 @@ function ResultRow({
 }) {
   return (
     <div
-      className={`flex items-center justify-between py-3.5 border-b border-gray-100 last:border-0 gap-4 ${
+      className={`flex items-center justify-between py-3.5 border-b border-slate-100 last:border-0 gap-4 ${
         isHighlight ? "bg-green-50 -mx-6 px-6 rounded-xl" : ""
       }`}
     >
       <div className="flex-1">
-        <p className={`text-sm ${isBold ? "font-bold text-gray-900" : "font-medium text-gray-700"}`}>{label}</p>
-        {description && <p className="text-xs text-gray-400 mt-0.5">{description}</p>}
+        <p className={`text-sm ${isBold ? "font-bold text-slate-900" : "font-medium text-slate-700"}`}>{label}</p>
+        {description && <p className="text-xs text-slate-400 mt-0.5">{description}</p>}
       </div>
-      <p className={`text-sm shrink-0 ${isBold ? "font-bold text-green-700 text-base" : "font-semibold text-gray-800"}`}>
+      <p className={`text-sm shrink-0 ${isBold ? "font-bold text-green-700 text-base" : "font-semibold text-slate-800"}`}>
         {value}
       </p>
     </div>
@@ -172,9 +172,9 @@ export default function PrecificacaoSaas() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Inputs */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-base font-semibold text-gray-800 mb-1">Parâmetros do negócio</h2>
-          <p className="text-xs text-gray-400 mb-4">Campos em amarelo são editáveis</p>
+        <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] p-6">
+          <h2 className="text-base font-semibold text-slate-800 mb-1">Parâmetros do negócio</h2>
+          <p className="text-xs text-slate-400 mb-4">Campos em amarelo são editáveis</p>
 
           <InputRow
             label="Churn Mensal"
@@ -206,8 +206,8 @@ export default function PrecificacaoSaas() {
         </div>
 
         {/* Results */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-base font-semibold text-gray-800 mb-4">Resultados calculados</h2>
+        <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] p-6">
+          <h2 className="text-base font-semibold text-slate-800 mb-4">Resultados calculados</h2>
 
           {isValid ? (
             <>
@@ -242,7 +242,7 @@ export default function PrecificacaoSaas() {
               </div>
             </>
           ) : (
-            <div className="flex items-center justify-center h-48 text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-48 text-slate-400 text-sm">
               Preencha todos os campos para ver os resultados
             </div>
           )}
@@ -281,8 +281,8 @@ export default function PrecificacaoSaas() {
 
       {/* Health indicator */}
       {isValid && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">Indicadores de saúde do SaaS</h3>
+        <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] p-5">
+          <h3 className="text-sm font-semibold text-slate-700 mb-4">Indicadores de saúde do SaaS</h3>
           <div className="space-y-3">
             <HealthRow
               label="LTV/CAC"
@@ -347,7 +347,7 @@ function HealthRow({
     <div className={`flex items-center gap-3 rounded-xl p-3 ${s.bg}`}>
       <div className={`w-2 h-8 rounded-full ${s.bar} flex-shrink-0`} />
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-gray-500">{label}</p>
+        <p className="text-xs font-medium text-slate-500">{label}</p>
         <p className={`text-sm font-semibold ${s.text}`}>{s.msg}</p>
       </div>
       <p className={`text-base font-bold ${s.text} shrink-0`}>{value}</p>

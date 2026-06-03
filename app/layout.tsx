@@ -6,8 +6,8 @@ import Navbar from "@/components/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Facilitadores Comercial",
-  description: "Ferramentas para o time comercial",
+  title: "Precificador · CPPEM",
+  description: "Modelos de precificação para o time comercial — Serviços, Produtos e SaaS",
 };
 
 export default function RootLayout({
