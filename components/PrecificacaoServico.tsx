@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useCloudStore } from "@/hooks/useCloudStore";
 
 function parseNum(str: string): number {
   const val = parseFloat(str.replace(/\./g, "").replace(",", "."));
@@ -242,20 +242,20 @@ function CustomCostRow({
 }
 
 export default function PrecificacaoServico() {
-  const [sFuncionarios, setFuncionarios] = useLocalStorage("prec_funcionarios", "5");
-  const [sSalario, setSalario] = useLocalStorage("prec_salario", "800,00");
-  const [sHorasPorFuncionario, setHorasPorFuncionario] = useLocalStorage("prec_horas_func", "40");
-  const [sPrecoHora, setPrecoHora] = useLocalStorage("prec_preco_hora", "100,00");
-  const [sHorasVendidas, setHorasVendidas] = useLocalStorage("prec_horas_vendidas", "40");
+  const [sFuncionarios, setFuncionarios] = useCloudStore("prec_funcionarios", "5");
+  const [sSalario, setSalario] = useCloudStore("prec_salario", "800,00");
+  const [sHorasPorFuncionario, setHorasPorFuncionario] = useCloudStore("prec_horas_func", "40");
+  const [sPrecoHora, setPrecoHora] = useCloudStore("prec_preco_hora", "100,00");
+  const [sHorasVendidas, setHorasVendidas] = useCloudStore("prec_horas_vendidas", "40");
 
-  const [sImposto, setImposto] = useLocalStorage("prec_imposto", "10");
-  const [sCartao, setCartao] = useLocalStorage("prec_cartao", "5");
-  const [customCosts, setCustomCosts] = useLocalStorage<CustomCost[]>(
+  const [sImposto, setImposto] = useCloudStore("prec_imposto", "10");
+  const [sCartao, setCartao] = useCloudStore("prec_cartao", "5");
+  const [customCosts, setCustomCosts] = useCloudStore<CustomCost[]>(
     "prec_custom_costs",
     DEFAULT_CUSTOM_COSTS
   );
 
-  const [sDespesasFixas, setDespesasFixas] = useLocalStorage("prec_desp_fixas", "40.000,00");
+  const [sDespesasFixas, setDespesasFixas] = useCloudStore("prec_desp_fixas", "40.000,00");
 
   const funcionarios = useMemo(() => parseNum(sFuncionarios), [sFuncionarios]);
   const salario = useMemo(() => parseNum(sSalario), [sSalario]);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useCloudStore } from "@/hooks/useCloudStore";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -931,8 +931,8 @@ const DOT_COLORS: Record<string, string> = {
 };
 
 export default function PrecificacaoProdutos() {
-  const [data, setData] = useLocalStorage<Record<string, Product[]>>("prod_data", DEFAULT_DATA);
-  const [customCategories, setCustomCategories] = useLocalStorage<Category[]>("prod_custom_categories", []);
+  const [data, setData] = useCloudStore<Record<string, Product[]>>("prod_data", DEFAULT_DATA);
+  const [customCategories, setCustomCategories] = useCloudStore<Category[]>("prod_custom_categories", []);
   const [activeCategory, setActiveCategory] = useState<CategoryId>("mentorias");
   const [addingCategory, setAddingCategory] = useState(false);
   const [newCatName, setNewCatName] = useState("");

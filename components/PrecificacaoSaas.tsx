@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useCloudStore } from "@/hooks/useCloudStore";
 
 function parseNum(str: string): number {
   const val = parseFloat(str.replace(/\./g, "").replace(",", "."));
@@ -124,10 +124,10 @@ function MetricCard({
 
 export default function PrecificacaoSaas() {
   // ── Inputs ──────────────────────────────────────────────────────
-  const [sChurn, setChurn] = useLocalStorage("saas_churn", "5,0");
-  const [sCac, setCac] = useLocalStorage("saas_cac", "200");
-  const [sMargem, setMargem] = useLocalStorage("saas_margem", "60");
-  const [sLtvCac, setLtvCac] = useLocalStorage("saas_ltv_cac", "6,0");
+  const [sChurn, setChurn] = useCloudStore("saas_churn", "5,0");
+  const [sCac, setCac] = useCloudStore("saas_cac", "200");
+  const [sMargem, setMargem] = useCloudStore("saas_margem", "60");
+  const [sLtvCac, setLtvCac] = useCloudStore("saas_ltv_cac", "6,0");
 
   // ── Parsed values ────────────────────────────────────────────────
   const churnPct = useMemo(() => parseNum(sChurn), [sChurn]);
