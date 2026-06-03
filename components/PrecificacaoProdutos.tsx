@@ -18,12 +18,6 @@ interface FixedCost {
   value: string;
 }
 
-interface Discounts {
-  venda: string;
-  dupla: string;
-  renovacao: string;
-}
-
 interface Product {
   id: string;
   name: string;
@@ -33,7 +27,6 @@ interface Product {
   variableCosts: VariableCost[];
   despesasFixas: string;
   despesasFixasList?: FixedCost[];
-  discounts: Discounts;
   ebitdaAlvo?: string;
 }
 
@@ -140,45 +133,44 @@ function p(
   cost: string,
   price: string,
   costs: VariableCost[],
-  despesas: string,
-  discounts: Discounts
+  despesas: string
 ): Product {
-  return { id, name, cost, price, qty: "1", variableCosts: costs, despesasFixas: despesas, discounts };
+  return { id, name, cost, price, qty: "1", variableCosts: costs, despesasFixas: despesas };
 }
 
 const DEFAULT_DATA: Record<CategoryId, Product[]> = {
   mentorias: [
-    p("m1", "Plano Combate - Supremo", "0", "1997", MENTORIA_COSTS(), "5250", { venda: "5", dupla: "10", renovacao: "20" }),
-    p("m2", "Plano Combate - Tático", "0", "997", MENTORIA_COSTS(), "1750", { venda: "5", dupla: "10", renovacao: "20" }),
-    p("m3", "Plano Combate - Operacional", "0", "597", MENTORIA_COSTS(), "0", { venda: "0", dupla: "10", renovacao: "20" }),
+    p("m1", "Plano Combate - Supremo", "0", "1997", MENTORIA_COSTS(), "5250"),
+    p("m2", "Plano Combate - Tático", "0", "997", MENTORIA_COSTS(), "1750"),
+    p("m3", "Plano Combate - Operacional", "0", "597", MENTORIA_COSTS(), "0"),
   ],
   presencial: [
-    p("p1", "Black - Anual", "0", "3900", PRESENCIAL_COSTS("10.5"), "61000", { venda: "3", dupla: "5", renovacao: "10" }),
-    p("p2", "Dourado - Anual", "0", "2700", PRESENCIAL_COSTS("0"), "61000", { venda: "3", dupla: "5", renovacao: "10" }),
-    p("p3", "Prata - Anual", "0", "2300", PRESENCIAL_COSTS("0"), "61000", { venda: "0", dupla: "0", renovacao: "5" }),
-    p("p4", "Black - Semestral", "0", "2900", PRESENCIAL_COSTS("10.5"), "30500", { venda: "3", dupla: "5", renovacao: "10" }),
-    p("p5", "Dourado - Semestral", "0", "2000", PRESENCIAL_COSTS("0"), "30500", { venda: "3", dupla: "5", renovacao: "10" }),
-    p("p6", "Prata - Semestral", "0", "1800", PRESENCIAL_COSTS("0"), "30500", { venda: "0", dupla: "0", renovacao: "5" }),
+    p("p1", "Black - Anual", "0", "3900", PRESENCIAL_COSTS("10.5"), "61000"),
+    p("p2", "Dourado - Anual", "0", "2700", PRESENCIAL_COSTS("0"), "61000"),
+    p("p3", "Prata - Anual", "0", "2300", PRESENCIAL_COSTS("0"), "61000"),
+    p("p4", "Black - Semestral", "0", "2900", PRESENCIAL_COSTS("10.5"), "30500"),
+    p("p5", "Dourado - Semestral", "0", "2000", PRESENCIAL_COSTS("0"), "30500"),
+    p("p6", "Prata - Semestral", "0", "1800", PRESENCIAL_COSTS("0"), "30500"),
   ],
   online: [
-    p("o1", "Cursos Federais", "0", "597", ONLINE_COSTS("2"), "0", { venda: "15", dupla: "10", renovacao: "20" }),
-    p("o2", "Cursos Penais", "0", "497", ONLINE_COSTS("2"), "0", { venda: "15", dupla: "10", renovacao: "20" }),
-    p("o3", "Cursos Civis", "0", "497", ONLINE_COSTS("2"), "0", { venda: "15", dupla: "10", renovacao: "20" }),
-    p("o4", "Cursos Militares", "0", "437", ONLINE_COSTS("4"), "0", { venda: "15", dupla: "10", renovacao: "20" }),
-    p("o5", "Cursos GCM", "0", "397", ONLINE_COSTS("2"), "0", { venda: "15", dupla: "10", renovacao: "20" }),
-    p("o6", "Presencial em Casa", "0", "462", ONLINE_COSTS("2"), "0", { venda: "15", dupla: "10", renovacao: "25" }),
+    p("o1", "Cursos Federais", "0", "597", ONLINE_COSTS("2"), "0"),
+    p("o2", "Cursos Penais", "0", "497", ONLINE_COSTS("2"), "0"),
+    p("o3", "Cursos Civis", "0", "497", ONLINE_COSTS("2"), "0"),
+    p("o4", "Cursos Militares", "0", "437", ONLINE_COSTS("4"), "0"),
+    p("o5", "Cursos GCM", "0", "397", ONLINE_COSTS("2"), "0"),
+    p("o6", "Presencial em Casa", "0", "462", ONLINE_COSTS("2"), "0"),
   ],
   fisicos: [
-    p("f1", "Apostila Padrão", "50", "140", FISICO_COSTS("50"), "0", { venda: "0", dupla: "0", renovacao: "0" }),
-    p("f2", "Caderno Padrão", "36", "77", FISICO_COSTS("36"), "0", { venda: "0", dupla: "0", renovacao: "0" }),
-    p("f3", "Vade Mecum Padrão", "45", "110", FISICO_COSTS("45"), "0", { venda: "0", dupla: "0", renovacao: "0" }),
-    p("f4", "Camisa de Algodão", "33", "60", FISICO_COSTS("33"), "0", { venda: "0", dupla: "0", renovacao: "0" }),
-    p("f5", "Camisa UV", "45", "90", FISICO_COSTS("45"), "0", { venda: "0", dupla: "0", renovacao: "0" }),
-    p("f6", "Camisa FIT", "35", "70", FISICO_COSTS("35"), "0", { venda: "0", dupla: "0", renovacao: "0" }),
+    p("f1", "Apostila Padrão", "50", "140", FISICO_COSTS("50"), "0"),
+    p("f2", "Caderno Padrão", "36", "77", FISICO_COSTS("36"), "0"),
+    p("f3", "Vade Mecum Padrão", "45", "110", FISICO_COSTS("45"), "0"),
+    p("f4", "Camisa de Algodão", "33", "60", FISICO_COSTS("33"), "0"),
+    p("f5", "Camisa UV", "45", "90", FISICO_COSTS("45"), "0"),
+    p("f6", "Camisa FIT", "35", "70", FISICO_COSTS("35"), "0"),
   ],
   supletivo: [
-    p("s1", "Supletivo Fund + Médio", "400", "1197", SUPLETIVO_COSTS("400"), "0", { venda: "15", dupla: "0", renovacao: "0" }),
-    p("s2", "Supletivo Médio", "400", "897", SUPLETIVO_COSTS("400"), "0", { venda: "5", dupla: "0", renovacao: "0" }),
+    p("s1", "Supletivo Fund + Médio", "400", "1197", SUPLETIVO_COSTS("400"), "0"),
+    p("s2", "Supletivo Médio", "400", "897", SUPLETIVO_COSTS("400"), "0"),
   ],
 };
 
@@ -252,15 +244,9 @@ function calcDRE(product: Product, ebitdaOverride?: string) {
     despesasFixas === 0 ? 0 : denom > 0 ? Math.ceil(despesasFixas / denom) : null;
   const targetRevenue = targetUnits !== null ? targetUnits * price : null;
 
-  const discounts = {
-    venda: { pct: parseN(product.discounts.venda), amt: valorVenda * (parseN(product.discounts.venda) / 100) },
-    dupla: { pct: parseN(product.discounts.dupla), amt: valorVenda * (parseN(product.discounts.dupla) / 100) },
-    renovacao: { pct: parseN(product.discounts.renovacao), amt: valorVenda * (parseN(product.discounts.renovacao) / 100) },
-  };
-
   return {
     valorVenda, custoVarTotal, costDetails, lucroBruto, lucroLiquido,
-    pct, markup, despesasFixas, discounts,
+    pct, markup, despesasFixas,
     mcUnit, mcUnitPct,
     breakEvenUnits, breakEvenRevenue,
     ebitdaAlvoPct, targetUnits, targetRevenue,
@@ -316,12 +302,6 @@ function ProductCard({
 
   const set = useCallback(
     (field: keyof Product, value: string) => onUpdate({ ...product, [field]: value }),
-    [product, onUpdate]
-  );
-
-  const setDiscount = useCallback(
-    (field: keyof Discounts, value: string) =>
-      onUpdate({ ...product, discounts: { ...product.discounts, [field]: value } }),
     [product, onUpdate]
   );
 
@@ -631,41 +611,6 @@ function ProductCard({
                   <td className={`px-3 py-2 text-right font-bold ${dre.lucroLiquido >= 0 ? "text-green-700" : "text-red-600"}`}>{fmtPct(mlPct)}</td>
                   <td />
                 </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Discounts */}
-          <div className="rounded-xl border border-gray-200 overflow-hidden">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="bg-gray-700 text-white">
-                  <th className="text-left px-3 py-2 font-semibold">Desconto</th>
-                  <th className="text-right px-3 py-2 font-semibold">Valor máximo</th>
-                  <th className="text-right px-3 py-2 font-semibold w-24">%</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(
-                  [
-                    { key: "venda", label: "Desconto Máx P/Venda" },
-                    { key: "dupla", label: "Desconto Máx P/Dupla" },
-                    { key: "renovacao", label: "Desconto Máx P/Renovação" },
-                  ] as { key: keyof Discounts; label: string }[]
-                ).map(({ key, label }) => (
-                  <tr key={key} className="border-b border-gray-50 last:border-0">
-                    <td className="px-3 py-1.5 font-medium text-gray-700">{label}</td>
-                    <td className="px-3 py-1.5 text-right text-gray-700">{fmt(dre.discounts[key].amt)}</td>
-                    <td className="px-3 py-1.5 text-right">
-                      <SmallInput
-                        value={product.discounts[key]}
-                        onChange={(v) => setDiscount(key, v)}
-                        suffix="%"
-                        className="w-16 text-right"
-                      />
-                    </td>
-                  </tr>
-                ))}
               </tbody>
             </table>
           </div>
@@ -1009,7 +954,6 @@ export default function PrecificacaoProdutos() {
       qty: "1",
       variableCosts: template(),
       despesasFixas: "0",
-      discounts: { venda: "0", dupla: "0", renovacao: "0" },
     };
     setData((prev) => ({
       ...prev,
