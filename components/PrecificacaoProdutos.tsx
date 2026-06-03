@@ -12,6 +12,12 @@ interface VariableCost {
   value: string;
 }
 
+interface FixedCost {
+  id: string;
+  name: string;
+  value: string;
+}
+
 interface Discounts {
   venda: string;
   dupla: string;
@@ -26,6 +32,7 @@ interface Product {
   qty: string;
   variableCosts: VariableCost[];
   despesasFixas: string;
+  despesasFixasList?: FixedCost[];
   discounts: Discounts;
   ebitdaAlvo?: string;
 }
@@ -195,11 +202,17 @@ function uid(): string {
   return `c_${Date.now()}_${Math.floor(Math.random() * 9999)}`;
 }
 
+function getFixedCostsList(product: Product): FixedCost[] {
+  if (product.despesasFixasList) return product.despesasFixasList;
+  return [{ id: "legacy", name: "Despesa fixa", value: product.despesasFixas || "0" }];
+}
+
 function calcDRE(product: Product, ebitdaOverride?: string) {
   const price = parseN(product.price);
   const qty = parseN(product.qty) || 1;
   const valorVenda = price * qty;
-  const despesasFixas = parseN(product.despesasFixas);
+  const fixedList = getFixedCostsList(product);
+  const despesasFixas = fixedList.reduce((s, f) => s + parseN(f.value), 0);
 
   let custoVarTotal = 0;
   const costDetails = product.variableCosts.map((c) => {
@@ -344,6 +357,38 @@ function ProductCard({
       variableCosts: [...product.variableCosts, { id: uid(), name: "Novo custo", type: "percent", value: "0" }],
     });
   }, [product, onUpdate]);
+
+  const fixedCosts = useMemo(() => getFixedCostsList(product), [product]);
+
+  const materializeFixed = useCallback(
+    (list: FixedCost[]): FixedCost[] =>
+      list.map((f) => (f.id === "legacy" ? { ...f, id: uid() } : f)),
+    []
+  );
+
+  const updateFixed = useCallback(
+    (id: string, field: keyof FixedCost, value: string) => {
+      const next = materializeFixed(
+        fixedCosts.map((f) => (f.id === id ? { ...f, [field]: value } : f))
+      );
+      onUpdate({ ...product, despesasFixasList: next, despesasFixas: "0" });
+    },
+    [fixedCosts, materializeFixed, product, onUpdate]
+  );
+
+  const removeFixed = useCallback(
+    (id: string) => {
+      const next = materializeFixed(fixedCosts.filter((f) => f.id !== id));
+      onUpdate({ ...product, despesasFixasList: next, despesasFixas: "0" });
+    },
+    [fixedCosts, materializeFixed, product, onUpdate]
+  );
+
+  const addFixed = useCallback(() => {
+    const base = materializeFixed(fixedCosts);
+    const next = [...base, { id: uid(), name: "Nova despesa fixa", value: "0" }];
+    onUpdate({ ...product, despesasFixasList: next, despesasFixas: "0" });
+  }, [fixedCosts, materializeFixed, product, onUpdate]);
 
   const mcPct = dre.pct(dre.lucroBruto);
   const mlPct = dre.pct(dre.lucroLiquido);
@@ -518,14 +563,65 @@ function ProductCard({
                   <td />
                 </tr>
 
-                {/* Despesas Fixas */}
-                <tr className="border-b border-gray-100 bg-gray-50">
+                {/* Despesas Fixas - header com total */}
+                <tr className="bg-gray-50 border-b border-gray-100">
                   <td className="px-3 py-2 font-bold text-gray-800">DESPESAS FIXAS</td>
-                  <td className="px-3 py-2 text-right">
-                    <SmallInput value={product.despesasFixas} onChange={(v) => set("despesasFixas", v)} prefix="R$" className="w-32 text-right" />
-                  </td>
-                  <td className="px-3 py-2 text-right text-gray-500">{dre.pct(dre.despesasFixas).toFixed(1).replace(".", ",")}%</td>
+                  <td className="px-3 py-2 text-right font-bold text-gray-800">{fmt(dre.despesasFixas)}</td>
+                  <td className="px-3 py-2 text-right text-gray-600 font-semibold">{dre.pct(dre.despesasFixas).toFixed(1).replace(".", ",")}%</td>
                   <td />
+                </tr>
+
+                {/* Sub-linhas de despesas fixas */}
+                {fixedCosts.map((f) => (
+                  <tr key={f.id} className="border-b border-gray-50 group hover:bg-amber-50/30">
+                    <td className="pl-6 pr-2 py-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-gray-300">└</span>
+                        <input
+                          type="text"
+                          value={f.name}
+                          onChange={(e) => updateFixed(f.id, "name", e.target.value)}
+                          className="flex-1 text-xs text-gray-600 bg-transparent border-b border-transparent focus:border-amber-400 focus:outline-none min-w-0"
+                        />
+                      </div>
+                    </td>
+                    <td className="px-3 py-1.5 text-right">
+                      <SmallInput value={f.value} onChange={(v) => updateFixed(f.id, "value", v)} prefix="R$" className="w-32 text-right" />
+                    </td>
+                    <td className="px-3 py-1.5 text-right">
+                      <span className="text-gray-500">{dre.pct(parseN(f.value)).toFixed(1).replace(".", ",")}%</span>
+                    </td>
+                    <td className="pr-1 py-1.5">
+                      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => removeFixed(f.id)}
+                          className="p-0.5 rounded hover:bg-red-50 text-gray-300 hover:text-red-400 transition-colors"
+                          title="Remover despesa fixa"
+                        >
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+
+                {/* Botão adicionar despesa fixa */}
+                <tr className="border-b border-gray-100">
+                  <td colSpan={4} className="pl-6 py-1.5">
+                    <button
+                      onClick={addFixed}
+                      className="flex items-center gap-1 text-xs text-green-700 hover:text-green-800 font-medium transition-colors"
+                    >
+                      <span className="w-4 h-4 rounded-full bg-green-100 hover:bg-green-200 flex items-center justify-center">
+                        <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                      </span>
+                      Adicionar despesa fixa
+                    </button>
+                  </td>
                 </tr>
 
                 {/* Lucro Líquido */}
