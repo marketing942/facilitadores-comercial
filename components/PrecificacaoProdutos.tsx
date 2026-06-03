@@ -27,7 +27,6 @@ interface Product {
   variableCosts: VariableCost[];
   despesasFixas: string;
   despesasFixasList?: FixedCost[];
-  ebitdaAlvo?: string;
 }
 
 type CategoryId = string;
@@ -235,7 +234,7 @@ function calcDRE(product: Product, ebitdaOverride?: string) {
   const breakEvenRevenue = breakEvenUnits !== null ? breakEvenUnits * price : null;
 
   // EBITDA alvo — quantas unidades para atingir margem EBITDA desejada
-  const ebitdaRaw = ebitdaOverride ?? product.ebitdaAlvo ?? "15";
+  const ebitdaRaw = ebitdaOverride ?? "15";
   const ebitdaAlvoPct = parseN(ebitdaRaw);
   const ebitdaFrac = ebitdaAlvoPct / 100;
   // n × mcUnit = despesasFixas + n × price × ebitdaFrac
@@ -610,61 +609,6 @@ function ProductCard({
                   <td className={`px-3 py-2 text-right font-bold text-sm ${dre.lucroLiquido >= 0 ? "text-green-800" : "text-red-700"}`}>{fmt(dre.lucroLiquido)}</td>
                   <td className={`px-3 py-2 text-right font-bold ${dre.lucroLiquido >= 0 ? "text-green-700" : "text-red-600"}`}>{fmtPct(mlPct)}</td>
                   <td />
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Viability analysis: break-even + EBITDA target */}
-          <div className="rounded-xl border border-gray-200 overflow-hidden">
-            <div className="bg-indigo-900 text-white px-3 py-2 flex items-center justify-between">
-              <span className="text-xs font-semibold tracking-wide">ANÁLISE DE VIABILIDADE</span>
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] text-indigo-200">EBITDA Alvo</span>
-                <SmallInput
-                  value={product.ebitdaAlvo ?? "15"}
-                  onChange={(v) => set("ebitdaAlvo", v)}
-                  suffix="%"
-                  className="w-16 text-right"
-                />
-              </div>
-            </div>
-            <table className="w-full text-xs">
-              <tbody>
-                <tr className="border-b border-gray-50 bg-blue-50/50">
-                  <td className="px-3 py-2 font-semibold text-gray-700">MC por unidade</td>
-                  <td className="px-3 py-2 text-right font-bold text-blue-800">{fmt(dre.mcUnit)}</td>
-                  <td className="px-3 py-2 text-right font-semibold text-blue-700 w-24">
-                    {dre.mcUnitPct.toFixed(1).replace(".", ",")}%
-                  </td>
-                </tr>
-                <tr className="border-b border-gray-50">
-                  <td className="px-3 py-2 text-gray-700 font-medium">Ponto de Equilíbrio</td>
-                  <td className="px-3 py-2 text-right font-semibold text-gray-900">
-                    {dre.breakEvenUnits === null
-                      ? <span className="text-red-500">MC negativa</span>
-                      : dre.breakEvenUnits === 0
-                      ? <span className="text-green-600">sem custo fixo</span>
-                      : `${dre.breakEvenUnits.toLocaleString("pt-BR")} unid.`}
-                  </td>
-                  <td className="px-3 py-2 text-right text-gray-500">
-                    {dre.breakEvenRevenue !== null && dre.breakEvenRevenue > 0 ? fmt(dre.breakEvenRevenue) : "—"}
-                  </td>
-                </tr>
-                <tr className={dre.targetUnits !== null && dre.targetUnits > 0 ? "bg-green-50" : ""}>
-                  <td className="px-3 py-2 font-semibold text-gray-800">
-                    Unidades p/ EBITDA {dre.ebitdaAlvoPct.toFixed(0)}%
-                  </td>
-                  <td className="px-3 py-2 text-right font-bold text-green-800">
-                    {dre.targetUnits === null
-                      ? <span className="text-red-500">inviável</span>
-                      : dre.targetUnits === 0
-                      ? <span className="text-green-700">qualquer volume</span>
-                      : `${dre.targetUnits.toLocaleString("pt-BR")} unid.`}
-                  </td>
-                  <td className="px-3 py-2 text-right font-semibold text-green-700">
-                    {dre.targetRevenue !== null && dre.targetRevenue > 0 ? fmt(dre.targetRevenue) : "—"}
-                  </td>
                 </tr>
               </tbody>
             </table>
