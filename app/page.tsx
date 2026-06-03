@@ -12,18 +12,47 @@ const tools = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
       </svg>
     ),
+    eyebrow: null as string | null,
   },
   {
     href: "/precificacao-produtos",
-    title: "Precificação de Produtos",
+    title: "CPPEM Concursos",
     description: "DRE por produto — Mentorias, Presencial, Online, Físicos e Supletivo",
     iconBg: "bg-rose-50 text-rose-700 ring-rose-100",
     accent: "from-rose-500/0 via-rose-500/0 to-rose-500/40",
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
       </svg>
     ),
+    eyebrow: "Produtos",
+  },
+  {
+    href: "/precificacao-colegio",
+    title: "Colégio CPPEM",
+    description: "Precificação de produtos do colégio — mensalidades, matrículas, materiais",
+    iconBg: "bg-blue-50 text-blue-700 ring-blue-100",
+    accent: "from-blue-500/0 via-blue-500/0 to-blue-500/40",
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+      </svg>
+    ),
+    eyebrow: "Produtos",
+  },
+  {
+    href: "/precificacao-unicive",
+    title: "Unicive Caruaru",
+    description: "Precificação de produtos da Unicive — cursos, taxas, mensalidades",
+    iconBg: "bg-amber-50 text-amber-700 ring-amber-100",
+    accent: "from-amber-500/0 via-amber-500/0 to-amber-500/40",
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      </svg>
+    ),
+    eyebrow: "Produtos",
   },
   {
     href: "/precificacao-saas",
@@ -36,6 +65,7 @@ const tools = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
       </svg>
     ),
+    eyebrow: null,
   },
 ];
 
@@ -78,7 +108,10 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </div>
-            <h2 className="mt-4 text-[15px] font-semibold text-slate-900 tracking-tight">{tool.title}</h2>
+            {tool.eyebrow && (
+              <p className="mt-4 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{tool.eyebrow}</p>
+            )}
+            <h2 className={`text-[15px] font-semibold text-slate-900 tracking-tight ${tool.eyebrow ? "mt-0.5" : "mt-4"}`}>{tool.title}</h2>
             <p className="mt-1 text-[13px] text-slate-500 leading-relaxed">{tool.description}</p>
           </Link>
         ))}

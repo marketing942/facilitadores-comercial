@@ -173,6 +173,45 @@ const DEFAULT_DATA: Record<CategoryId, Product[]> = {
   ],
 };
 
+// ─── Company configs ─────────────────────────────────────────────────────────
+
+export interface CompanyConfig {
+  /** Storage key for the products-per-category object */
+  dataKey: string;
+  /** Storage key for user-added custom categories */
+  customCategoriesKey: string;
+  /** Built-in (non-deletable) categories that ship with the company */
+  builtInCategories: Category[];
+  /** Initial seed data — only used the first time, when the cloud row is empty */
+  defaultData: Record<CategoryId, Product[]>;
+  /** Display name shown in headers */
+  displayName: string;
+}
+
+export const CONCURSOS_CONFIG: CompanyConfig = {
+  dataKey: "prod_data",
+  customCategoriesKey: "prod_custom_categories",
+  builtInCategories: CATEGORIES,
+  defaultData: DEFAULT_DATA,
+  displayName: "CPPEM Concursos",
+};
+
+export const COLEGIO_CONFIG: CompanyConfig = {
+  dataKey: "prod_data_colegio",
+  customCategoriesKey: "prod_custom_categories_colegio",
+  builtInCategories: [],
+  defaultData: {},
+  displayName: "Colégio CPPEM",
+};
+
+export const UNICIVE_CONFIG: CompanyConfig = {
+  dataKey: "prod_data_unicive",
+  customCategoriesKey: "prod_custom_categories_unicive",
+  builtInCategories: [],
+  defaultData: {},
+  displayName: "Unicive Caruaru",
+};
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function parseN(s: string): number {
@@ -884,19 +923,37 @@ const DOT_COLORS: Record<string, string> = {
   lime: "bg-lime-500",
 };
 
-export default function PrecificacaoProdutos() {
-  const [data, setData] = useCloudStore<Record<string, Product[]>>("prod_data", DEFAULT_DATA);
-  const [customCategories, setCustomCategories] = useCloudStore<Category[]>("prod_custom_categories", []);
-  const [activeCategory, setActiveCategory] = useState<CategoryId>("mentorias");
+export default function PrecificacaoProdutos({
+  config = CONCURSOS_CONFIG,
+}: {
+  config?: CompanyConfig;
+}) {
+  const [data, setData] = useCloudStore<Record<string, Product[]>>(config.dataKey, config.defaultData);
+  const [customCategories, setCustomCategories] = useCloudStore<Category[]>(config.customCategoriesKey, []);
+  const [activeCategory, setActiveCategory] = useState<CategoryId>(
+    config.builtInCategories[0]?.id ?? ""
+  );
   const [addingCategory, setAddingCategory] = useState(false);
   const [newCatName, setNewCatName] = useState("");
   const [newCatColor, setNewCatColor] = useState("teal");
   const newCatInputRef = useRef<HTMLInputElement>(null);
 
   const allCategories = useMemo(
-    () => [...CATEGORIES, ...customCategories],
-    [customCategories]
+    () => [...config.builtInCategories, ...customCategories],
+    [config.builtInCategories, customCategories]
   );
+
+  // If the active category no longer exists (e.g. just deleted, or
+  // switching companies), fall back to the first available one.
+  useEffect(() => {
+    if (allCategories.length === 0) {
+      if (activeCategory !== "") setActiveCategory("");
+      return;
+    }
+    if (!allCategories.some((c) => c.id === activeCategory)) {
+      setActiveCategory(allCategories[0].id);
+    }
+  }, [allCategories, activeCategory]);
 
   useEffect(() => {
     if (addingCategory) newCatInputRef.current?.focus();
@@ -928,7 +985,8 @@ export default function PrecificacaoProdutos() {
         delete next[catId];
         return next;
       });
-      setActiveCategory("mentorias");
+      // The useEffect that watches allCategories will pick a new active
+      // category if the deleted one was active.
     },
     [setCustomCategories, setData]
   );
@@ -970,12 +1028,14 @@ export default function PrecificacaoProdutos() {
     }));
   }, [activeCategory, setData]);
 
-  const catConfig = allCategories.find((c) => c.id === activeCategory) ?? CATEGORIES[0];
+  const catConfig = allCategories.find((c) => c.id === activeCategory) ?? allCategories[0];
+
+  const hasCategories = allCategories.length > 0;
 
   return (
     <div className="space-y-5">
       {/* Top: comparativo de margens entre categorias */}
-      <CategoryMarginChart data={data} categories={allCategories} />
+      {hasCategories && <CategoryMarginChart data={data} categories={allCategories} />}
 
       {/* Category tabs */}
       <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] p-1 flex gap-1 overflow-x-auto items-center">
@@ -1039,37 +1099,66 @@ export default function PrecificacaoProdutos() {
         )}
       </div>
 
+      {/* Empty state when no categories exist yet */}
+      {!hasCategories && (
+        <div className="bg-white rounded-2xl ring-1 ring-slate-200 shadow-[0_1px_2px_0_rgba(15,23,42,0.04)] px-6 py-12 text-center">
+          <div className="w-12 h-12 rounded-xl bg-slate-100 mx-auto flex items-center justify-center mb-4">
+            <svg className="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
+          <h3 className="text-sm font-semibold text-slate-900">Nenhuma categoria criada ainda</h3>
+          <p className="text-sm text-slate-500 mt-1 max-w-md mx-auto">
+            Comece criando a primeira categoria de produtos para {config.displayName}.
+            Cada categoria agrupa produtos com a mesma estrutura de custos variáveis e despesas fixas.
+          </p>
+          <button
+            onClick={() => setAddingCategory(true)}
+            className="mt-5 inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Criar primeira categoria
+          </button>
+        </div>
+      )}
+
       {/* Products list */}
-      <div className="space-y-3">
-        {products.map((product, i) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onUpdate={(updated) => updateProduct(product.id, updated)}
-            onDelete={() => deleteProduct(product.id)}
-            defaultExpanded={i === 0}
-          />
-        ))}
+      {hasCategories && catConfig && (
+        <>
+          <div className="space-y-3">
+            {products.map((product, i) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onUpdate={(updated) => updateProduct(product.id, updated)}
+                onDelete={() => deleteProduct(product.id)}
+                defaultExpanded={i === 0}
+              />
+            ))}
 
-        {/* Add product button */}
-        <button
-          onClick={addProduct}
-          className="w-full py-3 border-2 border-dashed border-slate-200 rounded-xl text-sm text-slate-400 hover:text-green-700 hover:border-green-300 hover:bg-green-50 font-medium transition-all flex items-center justify-center gap-2"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-          Novo produto em {catConfig.label}
-        </button>
-      </div>
+            {/* Add product button */}
+            <button
+              onClick={addProduct}
+              className="w-full py-3 border-2 border-dashed border-slate-200 rounded-xl text-sm text-slate-400 hover:text-green-700 hover:border-green-300 hover:bg-green-50 font-medium transition-all flex items-center justify-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              Novo produto em {catConfig.label}
+            </button>
+          </div>
 
-      {/* Category insights */}
-      <CategoryInsights products={products} catLabel={catConfig.label} />
+          {/* Category insights */}
+          <CategoryInsights products={products} catLabel={catConfig.label} />
 
-      {/* Info footer */}
-      <p className="text-xs text-slate-400 text-center">
-        Campos em amarelo são editáveis · passe o mouse sobre um custo para remover ou trocar o tipo (R$ / %)
-      </p>
+          {/* Info footer */}
+          <p className="text-xs text-slate-400 text-center">
+            Campos em amarelo são editáveis · passe o mouse sobre um custo para remover ou trocar o tipo (R$ / %)
+          </p>
+        </>
+      )}
     </div>
   );
 }
