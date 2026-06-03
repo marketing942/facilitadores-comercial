@@ -2,19 +2,6 @@ import Link from "next/link";
 
 const tools = [
   {
-    href: "/calculadora",
-    title: "Calculadora de Parcelas",
-    description: "Simule juros, parcelas e o valor líquido recebido via Guru + Pagar.me",
-    icon: (
-      <svg className="w-6 h-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-      </svg>
-    ),
-    iconBg: "bg-green-100 group-hover:bg-green-200",
-    border: "hover:border-green-400",
-    badge: "text-green-700 bg-green-50",
-  },
-  {
     href: "/precificacao",
     title: "Precificação de Serviço",
     description: "Calcule o custo da operação, o preço por hora e visualize o DRE completo",
@@ -53,19 +40,6 @@ const tools = [
     border: "hover:border-purple-400",
     badge: "text-purple-700 bg-purple-50",
   },
-  {
-    href: "/calculadora-ton",
-    title: "Calculadora Maquineta TON",
-    description: "Simule taxas da TON por plano (Super, Turbo, Max) em Pix, débito e crédito parcelado",
-    icon: (
-      <svg className="w-6 h-6 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-      </svg>
-    ),
-    iconBg: "bg-amber-100 group-hover:bg-amber-200",
-    border: "hover:border-amber-400",
-    badge: "text-amber-700 bg-amber-50",
-  },
 ];
 
 export default function Home() {
@@ -97,16 +71,6 @@ export default function Home() {
             </div>
           </Link>
         ))}
-
-        <div className="bg-white rounded-2xl shadow-sm border border-dashed border-gray-200 p-6 opacity-50 cursor-not-allowed">
-          <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
-            <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-          </div>
-          <h2 className="text-lg font-semibold text-gray-400 mb-1">Em breve</h2>
-          <p className="text-sm text-gray-400">Novas ferramentas serão adicionadas aqui</p>
-        </div>
       </div>
 
       {/* Footer */}
